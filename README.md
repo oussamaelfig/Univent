@@ -17,5 +17,5 @@ Note equipe est constitue de 5 personnes:
 - Emperor Neil
 - Hermann DJAHA
 
-Product owner: M. Ammar Hamad.
+Product owner: Eric Lavallée
 
