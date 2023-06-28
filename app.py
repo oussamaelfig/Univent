@@ -1,9 +1,19 @@
 import sqlite3
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, g
 from werkzeug.utils import secure_filename
+from database import Database
 
 app = Flask(__name__)
 
+def get_db():
+    if getattr(g, "_database", None) is None:
+        g._database = Database()
+    return g._database
+
+@app.teardown_appcontext
+def fermer_app():
+    if getattr(g, "_database", None) is None:
+        g._database.close_connection()
 
 @app.route("/")
 def hello_world():  # put application's code here
@@ -46,29 +56,10 @@ def create_event():
         #  l'événement. Cela pourrait être fait en utilisant un système
         #  d'authentification et de session.
         creator_id = 1
-
-        # Connect to SQLite
-        con = sqlite3.connect("db/database.db")
-        cur = con.cursor()
-
-        # Insert event into the database
-        cur.execute(
-            "INSERT INTO Events (creator_id, title, start_date_time, "
-            "end_date_time, location, flyer_image, description) VALUES (?, "
-            "?, ?, ?, ?, ?, ?)",
-            (
-                creator_id,
-                title,
-                start_date_time,
-                end_date_time,
-                location,
-                flyer_image_name,
-                description,
-            ),
-        )
-        con.commit()
-        con.close()
-
+        # utilise la class Database pour faire le traitement.
+        get_db().creer_new_evenement(creator_id, title, start_date_time, end_date_time,
+                                     location, flyer_image_name, description)
+        
         return "Event created successfully"
 
     return render_template("create_event.html")

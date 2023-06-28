@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}
+    UNIVENT - Créer un compte
+{% endblock %}
+{% block content %}
+    <!-- Page content-->
+    <section class="py-5">
+        <div class="container px-5">
+            <!-- Create account form-->
+            <div class="bg-light rounded-3 py-5 px-4 px-md-5 mb-5">
+                <div class="text-center mb-5">
+                    <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3">
+                        <i class="bi bi-calendar-plus"></i>
+                    </div>
+                    <h1 class="fw-bolder">Créez-vous un compte avec nous!</h1>
+                    <p class="lead fw-normal text-muted mb-0">Remplissez les informations ci-dessous</p>
+                </div>
+                <ul>
+                    {% for err in erreurs %}
+                            <li>{{err}}</li>
+                    {% endfor %}
+                </ul> 
+                <div class="row gx-5 justify-content-center">
+                    <div class="col-lg-8 col-xl-6">
+                        <form method="POST" action="/create_account">
+                            <div class="mb-3">
+                                <label for="title" class="form-label">Nom complet *:</label>
+                                <input type="text" class="form-control" id="nom" name="nom" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="title" class="form-label">Courriel *:</label>
+                                <input type="text" class="form-control" id="courriel" name="courriel" required>
+                            </div>
+                            <div class="mb-3">
+                                <p class="fw-light">Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule et un caractère de ponctuation.</p>
+                                <label for="title" class="form-label">Mot de passe *:</label>
+                                <input type="password" class="form-control" id="mdp" name="mdp" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="title" class="form-label">Confirmation du mot de passe *:</label>
+                                <input type="password" class="form-control" id="mdpConf" name="titleConf" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="title" class="form-label">Type de compte *:</label>
+                                <select name="type" id="type" disabled>
+                                    <!--Est actuellement le seul type de compte qui peut être chosi-->
+                                    <option value="0">Organisation</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <p class="fw-light text-danger">Tous les champs ayant un astérisque (*) sont obligatoires.</p>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Créer</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
