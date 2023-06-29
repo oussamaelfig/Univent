@@ -11,11 +11,12 @@ UNIVENT notifie aux abonnés d'un évènement le démarrage imminent de celui-ci
 
 ## Equipe
 Note equipe est constitue de 5 personnes:
-- Elphi
-- BADNIC44
-- TheReal
-- Emperor Neil
+- 
+- Nicolas Plante
+- Keven Jude Anténor
+- Neil Ridène
 - Hermann DJAHA
+- Kouassi Emmanuel Adje
 
 Product owner: Eric Lavallée
 
