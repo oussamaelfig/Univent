@@ -102,6 +102,17 @@ def creer_compte():
         return redirect('/succes_compte')
     return render_template("create_account.html")
 
+@app.route("/login", methods=["POST", "GET"])
+def connecter():
+    if request.method == "POST":
+       if "id" not in session:
+           ##conencter
+       else:
+           return redirect("/user_page") # TODO. check le hub
+    else:
+        return render_template("login.html") 
+        
+
 def valider_compte(nom, courriel):
     err = []
     regex = r'([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+'

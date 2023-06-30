@@ -9,6 +9,12 @@ create table users
     salt       varchar(128)
 );
 
+create table sessions(
+    id integer PRIMARY KEY,
+    identifiant varchar(32),
+    userId varchar(32)
+);
+
 CREATE TABLE Events
 (
     event_id        INTEGER PRIMARY KEY,
