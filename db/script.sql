@@ -1,6 +1,7 @@
 create table users
 (
     id         integer primary key,
+    identifiant varchar(32),
     nom        varchar(100),
     typeCompte integer,
     courriel   varchar(100),
