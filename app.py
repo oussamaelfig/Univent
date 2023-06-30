@@ -12,8 +12,8 @@ def get_db():
     return g._database
 
 @app.teardown_appcontext
-def fermer_app():
-    if getattr(g, "_database", None) is None:
+def close_db(exeption):
+    if getattr(g, "_database", None) is not None:
         g._database.close_connection()
 
 @app.route("/")
