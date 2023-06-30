@@ -8,15 +8,18 @@ import re
 
 app = Flask(__name__)
 
+
 def get_db():
     if getattr(g, "_database", None) is None:
         g._database = Database()
     return g._database
 
+
 @app.teardown_appcontext
 def close_db(exeption):
     if getattr(g, "_database", None) is not None:
         g._database.close_connection()
+
 
 @app.route("/")
 def hello_world():  # put application's code here
@@ -60,9 +63,10 @@ def create_event():
         #  d'authentification et de session.
         creator_id = 1
         # utilise la class Database pour faire le traitement.
-        get_db().creer_new_evenement(creator_id, title, start_date_time, end_date_time,
+        get_db().creer_new_evenement(creator_id, title, start_date_time,
+                                     end_date_time,
                                      location, flyer_image_name, description)
-        
+
         return "Event created successfully"
 
     return render_template("create_event.html")
@@ -107,6 +111,7 @@ def valider_compte(nom, courriel):
         err.append("Le courriel entré est invalide.")
     return err
 
+
 def valider_mdp(mdp, mdp2):
     err = []
     a_err = False
@@ -128,6 +133,7 @@ def valider_mdp(mdp, mdp2):
     if mdp != mdp2:
         err.append("Les deux mots de passe ne concordent pas.")
     return err
+
 
 if __name__ == "__main__":
     app.run()
