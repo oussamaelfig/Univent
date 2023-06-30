@@ -7,7 +7,7 @@ class Database:
 
     def get_connexion(self):
         if self.connection is None:
-            self.connection = sqlite3.connect("database.db")
+            self.connection = sqlite3.connect("db/database.db")
         return self.connection
 
     def close_connection(self):
@@ -15,15 +15,15 @@ class Database:
             self.connection.close()
 
     def creer_new_evenement(
-        self,
-        creator_id,
-        title,
-        start_date_time,
-        end_date_time,
-        location,
-        flyer_image_name,
-        description,
-        max_registration,
+            self,
+            creator_id,
+            title,
+            start_date_time,
+            end_date_time,
+            location,
+            flyer_image_name,
+            description,
+            max_registration,
     ):
         connect = self.get_connexion()
         cursor = connect.cursor()

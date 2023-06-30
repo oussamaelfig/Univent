@@ -49,11 +49,12 @@ def create_event():
         description = request.form["description"]
         max_registration = request.form["max_registration"]
 
-        # Handle the image upload
+        flyer_image_name = None
+
         flyer_image = request.files["flyer_image"]
         if flyer_image:
             flyer_image_name = secure_filename(flyer_image.filename)
-            flyer_image.save("db/flyerImages" + flyer_image_name)
+            flyer_image.save("db/flyerImages/" + flyer_image_name)
 
         creator_id = 1
         get_db().creer_new_evenement(creator_id, title, start_date_time,
