@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}
+    UNIVENT - Se connecter
+{% endblock %}
+{% block content %}
+    <!-- Page content-->
+    <section class="py-5">
+        <div class="container px-5">
+            <!-- form pour creer compte -->
+            <div class="bg-light rounded-3 py-5 px-4 px-md-5 mb-5">
+                <div class="text-center mb-5">
+                    <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3">
+                        <i class="bi bi-plug"></i>
+                    </div>
+                    <h1 class="fw-bolder">Connectez-vous</h1>
+                    <p class="lead fw-normal text-muted mb-0">Ainsi vous aurez accès à un monde infini d'évènement!</p>
+                </div>
+                <div class="row gx-5 justify-content-center">
+                    
+                    <div class="col-lg-8 col-xl-6">
+                        <ul>
+                            {% for err in erreurs %}
+                                    <li class="text-danger fw-light">{{err}}</li>
+                            {% endfor %}
+                        </ul> 
+                        <form method="POST" action="/login">
+                            <div class="mb-3">
+                                <label for="title" class="form-label">Courriel *:</label>
+                                <input type="email" class="form-control" id="courriel" name="courriel" required>
+                            </div>
+                            <div class="mb-3">
+                                <p class="fw-light">Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère de ponctuation.</p>
+                                <label for="title" class="form-label">Mot de passe *:</label>
+                                <input type="password" class="form-control" id="mdp" name="mdp" required>
+                            <button type="submit" class="btn btn-primary">Se connecter</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

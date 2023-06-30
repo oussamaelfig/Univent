@@ -108,12 +108,21 @@ def creer_compte():
 def connecter():
     if request.method == "POST":
        if "id" not in session:
-           courriel = request.form["courriel"]
-           mdp = request.form["mdp"]
-           err = ["Le courriel et/ou le nom d'usager sont erronés"]
-           if courriel == "" or mdp == "":
+            courriel = request.form["courriel"]
+            mdp = request.form["mdp"]
+            err = ["Le courriel et/ou le nom d'usager sont erronés"]
+            if courriel == "" or mdp == "" or len(courriel) > 100:
                return render_template("login.html", erreurs=err)
-           
+            utilisateur = get_db().get_user_pass_from_courriel(courriel)
+            if utilisateur is None:
+                return render_template("login.html", erreurs=err)
+            salt = utilisateur[1]
+            mdp_entre = hashlib.sha512(str(mdp + salt).encode("utf-8")).hexdigest()
+            if mdp_entre == utilisateur[0]:
+                id_session = uuid.uuid4().hex
+                get_db().creer_session(id_session, utilisateur[2])
+                session["id"] = id_session
+                return redirect("/user_page/"+ utilisateur[2])
        else:
            return redirect("/user_page") # TODO. check le hub
     else:
