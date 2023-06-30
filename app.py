@@ -6,15 +6,18 @@ import re
 
 app = Flask(__name__)
 
+
 def get_db():
     if getattr(g, "_database", None) is None:
         g._database = Database()
     return g._database
 
+
 @app.teardown_appcontext
 def close_db(exeption):
     if getattr(g, "_database", None) is not None:
         g._database.close_connection()
+
 
 @app.route("/")
 def hello_world():  # put application's code here
@@ -58,9 +61,10 @@ def create_event():
         #  d'authentification et de session.
         creator_id = 1
         # utilise la class Database pour faire le traitement.
-        get_db().creer_new_evenement(creator_id, title, start_date_time, end_date_time,
+        get_db().creer_new_evenement(creator_id, title, start_date_time,
+                                     end_date_time,
                                      location, flyer_image_name, description)
-        
+
         return "Event created successfully"
 
     return render_template("create_event.html")
@@ -77,19 +81,21 @@ def creer_compte():
         err = valider_compte(nom, courriel, type_compte)
         err.insert(valider_mdp(mdp, mdp_conf))
         if len(err) != 0:
-            return render_template("create_account.html", erreurs=err) 
-        # creer dans bd.
+            return render_template("create_account.html", erreurs=err)
+            # creer dans bd.
     return render_template("create_account.html")
-    
+
 
 def valider_compte(nom, courriel, type_compte):
     err = []
     regex = r'([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+'
     if nom == "" or len(nom) < 100:
         err.insert("Le nom entré est invalide (100 caractères maximum).")
-    if courriel == "" or len(courriel) < 100 or not re.fullmatch(regex, courriel): #REGEX EST COURRIEL.
+    if courriel == "" or len(courriel) < 100 or not re.fullmatch(regex,
+                                                                 courriel):  # REGEX EST COURRIEL.
         err.insert("Le courriel entré est invalide.")
     return err
+
 
 def valider_mdp(mdp, mdp2):
     err = []
@@ -107,10 +113,11 @@ def valider_mdp(mdp, mdp2):
     for c in mdp:
         if c in punctuation and not a_err:
             return err
-    err.insert("Le mot de passe entré est invalide.")    
+    err.insert("Le mot de passe entré est invalide.")
     if mdp != mdp2:
         err.insert("Les deux mots de passe ne concordent pas.")
     return err
+
 
 if __name__ == "__main__":
     app.run()
