@@ -1,7 +1,8 @@
 import sqlite3
-from flask import Flask, render_template, request, g, session, redirect
+from flask import Flask, render_template, request, g, session, redirect, Response
 from werkzeug.utils import secure_filename
 from database import Database
+from functools import wraps
 import uuid
 import hashlib
 import re
@@ -13,6 +14,25 @@ def get_db():
     if getattr(g, "_database", None) is None:
         g._database = Database()
     return g._database
+
+def authentication_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if not is_authenticated(session):
+            return send_unauthorized()
+        return f(*args, **kwargs)
+    return decorated
+
+# Ne regarde pas le type d'utilisateur. Seulement qu'il soit authentifié
+def is_authenticated(session):
+    if ("id" in session and
+            get_db().get_session_id_from_id_session(session["id"]) is
+            not None):
+        return True
+    return False
+
+def send_unauthorized():
+    return redirect("/login", 401)
 
 
 @app.teardown_appcontext
@@ -40,7 +60,7 @@ def contact():  # put application's code here
 def about():
     return render_template("about.html")
 
-
+@authentication_required
 @app.route("/create_event", methods=["GET", "POST"])
 def create_event():
     if request.method == "POST":
@@ -103,7 +123,7 @@ def creer_compte():
         get_db().creer_user(identifiant, nom, courriel, type_compte, hache, salt)
         return redirect('/succes_compte')
     if "id" in session:
-        return redirect("/user_page")
+        return redirect("/user_page/" + get_db().get_id_user_from_id_session(session["id"]))
     return render_template("create_account.html")
 
 @app.route("/login", methods=["POST", "GET"])
