@@ -19,46 +19,29 @@
 - Djaha Hermann | DJAM21128107
 
 #### Product Owner :
+
 - Éric Lavallée | lavallee.eric@uqam.ca
 
 #### Courriels :
 
 - el-figha.oussama@courriel.uqam.ca
+- ridene.neil@courrier.uqam.ca
+- adje.kouassi_emmanuel@courrier.uqam.ca
+- antenor.keven_jude@courrier.uqam.ca
+- plante.nicolas.4@courrier.uqam.ca
+- djaha.monemon_junior_hermann@courrier.uqam.ca
 
 ## **📝 Titre et description du projet**
 
 ### UNIVENT
 
-Notre équipe a été créée dans le but de développer une application web
-novatrice et puissante qui permettra aux étudiants et aux universités de gérer
-efficacement leurs événements universitaires. Nous sommes motivés par la
-passion de créer une plateforme unique qui répondra aux besoins spécifiques de
-la communauté universitaire et facilitera la planification, la promotion et la
-participation aux événements.
-Notre contribution unique à l'organisation réside dans notre capacité à créer
-une solution personnalisée pour les événements universitaires. Nous comprenons
-les défis et les exigences uniques auxquels les étudiants et les universités
-sont confrontés lorsqu'ils organisent des événements, et nous nous efforcerons
-de fournir une plateforme conviviale et intuitive qui répondra à leurs besoins
-spécifiques.
-En contribuant au succès de l'organisation, notre équipe joue un rôle clé dans
-l'amélioration de la vie étudiante. Nous permettons aux étudiants de rester
-informés des événements pertinents, d'explorer une variété d'activités et
-d'interagir avec leur communauté universitaire. Nous offrons également aux
-universités un outil précieux pour promouvoir leurs programmes, renforcer leur
-réputation et favoriser l'engagement des étudiants.
-Si notre équipe venait à cesser d'exister, l'organisation risquerait de perdre
-une solution spécialisée et adaptée aux événements universitaires. Les
-étudiants pourraient rencontrer des difficultés à trouver et à participer aux
-événements, tandis que les universités auraient du mal à promouvoir leurs
-activités et à stimuler l'engagement des étudiants. En bref, la communauté
-universitaire perdrait un moyen essentiel de connecter les étudiants et de
-créer une vie étudiante dynamique.
-En tant qu'équipe de développement, nous sommes extrêmement utiles à nos
-clients et utilisateurs. Nous leur offrons une plateforme intuitive qui
-simplifie la gestion des événements universitaires, leur permet de découvrir
-facilement les activités qui les intéressent et de se connecter avec leurs
-pairs. Nous visons à offrir une expérience utilisateur exceptionnelle, en
-veillant à ce que nos clients et utilisateurs se sentent pris en charge,
-informés et engagés dans leur vie universitaire.
+Ce projet vise à développer une plateforme web dédiée à l'UQAM et ses
+associations étudiantes, inspirée de sites tels qu'Eventbrite ou Ticketmaster.
+L'objectif principal est de permettre aux étudiants et au personnel de
+l'université de créer, de promouvoir et de vendre des billets pour une variété
+d'événements universitaires. Cela comprend, des conférences, des ateliers, des
+concerts, des événements sportifs et des réunions sociales. La plateforme
+fournira un espace centralisé pour tous les événements liés à l'UQAM,
+améliorant ainsi la visibilité et l'accessibilité pour tous les membres de la
+communauté universitaire.
 
