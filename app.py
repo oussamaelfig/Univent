@@ -102,6 +102,8 @@ def creer_compte():
         hache = hashlib.sha512(str(mdp + salt).encode("utf-8")).hexdigest()
         get_db().creer_user(identifiant, nom, courriel, type_compte, hache, salt)
         return redirect('/succes_compte')
+    if "id" in session:
+        return redirect("/user_page")
     return render_template("create_account.html")
 
 @app.route("/login", methods=["POST", "GET"])
@@ -124,10 +126,14 @@ def connecter():
                 session["id"] = id_session
                 return redirect("/user_page/"+ utilisateur[2])
        else:
-           return redirect("/user_page") # TODO. check le hub
+           return redirect("/user_page/" + get_db().get_id_user_from_id_session(session["id"]))
     else:
         return render_template("login.html") 
         
+
+@app.route("/user_succes/<identifiant>")
+def afficher_page_user(identifiant):
+    return render_template("page_user.html")
 
 def valider_compte(nom, courriel):
     err = []
