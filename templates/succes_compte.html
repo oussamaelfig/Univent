@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}
+UNIVENT - Succès
+{% endblock %}
+{% block content %}
+<section class="py-3">
+    <div class="container text-center px-5">
+        <!-- form pour creer compte -->
+        <div class="bg-light rounded-3 py-5 px-4 px-md-5 mb-5">
+
+            <h1>Le compte à été créé avec succès!</h1>
+            <div class="row gx-5 justify-content-center">
+                <div class="col-lg-8 col-xl-6">
+                    <button class="btn btn-secondary" onclick="naviguerLogin()">Se
+                        connecter</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+    function navigerLogin()
+    {
+        window.location.href("/login")
+    }
+</script>
+{% endblock %}

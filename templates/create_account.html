@@ -6,22 +6,23 @@
     <!-- Page content-->
     <section class="py-5">
         <div class="container px-5">
-            <!-- Create account form-->
+            <!-- form pour creer compte -->
             <div class="bg-light rounded-3 py-5 px-4 px-md-5 mb-5">
                 <div class="text-center mb-5">
                     <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3">
-                        <i class="bi bi-calendar-plus"></i>
+                        <i class="bi bi-file-person"></i>
                     </div>
                     <h1 class="fw-bolder">Créez-vous un compte avec nous!</h1>
                     <p class="lead fw-normal text-muted mb-0">Remplissez les informations ci-dessous</p>
                 </div>
-                <ul>
-                    {% for err in erreurs %}
-                            <li>{{err}}</li>
-                    {% endfor %}
-                </ul> 
                 <div class="row gx-5 justify-content-center">
+                    
                     <div class="col-lg-8 col-xl-6">
+                        <ul>
+                            {% for err in erreurs %}
+                                    <li class="text-danger fw-light">{{err}}</li>
+                            {% endfor %}
+                        </ul> 
                         <form method="POST" action="/create_account">
                             <div class="mb-3">
                                 <label for="title" class="form-label">Nom complet *:</label>
@@ -29,7 +30,7 @@
                             </div>
                             <div class="mb-3">
                                 <label for="title" class="form-label">Courriel *:</label>
-                                <input type="text" class="form-control" id="courriel" name="courriel" required>
+                                <input type="email" class="form-control" id="courriel" name="courriel" required>
                             </div>
                             <div class="mb-3">
                                 <p class="fw-light">Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère de ponctuation.</p>
@@ -38,11 +39,11 @@
                             </div>
                             <div class="mb-3">
                                 <label for="title" class="form-label">Confirmation du mot de passe *:</label>
-                                <input type="password" class="form-control" id="mdpConf" name="titleConf" required>
+                                <input type="password" class="form-control" id="mdpConf" name="mdpConf" required>
                             </div>
                             <div class="mb-3">
                                 <label for="title" class="form-label">Type de compte *:</label>
-                                <select name="type" id="type" disabled>
+                                <select name="type" id="type" class="form-select">
                                     <!--Est actuellement le seul type de compte qui peut être chosi-->
                                     <option value="0">Organisation</option>
                                 </select>
