@@ -84,6 +84,7 @@ def creer_compte():
         mdp = request.form["mdp"]
         mdp_conf = request.form["mdpConf"]
         type_compte = request.form["type"]
+        err = []
         if get_db().get_user_from_courriel(courriel) is not None:
             err.append("Un compte existe déjà avec ce courriel.")
             return render_template("create_account.html", erreurs=err)
@@ -106,7 +107,12 @@ def creer_compte():
 def connecter():
     if request.method == "POST":
        if "id" not in session:
-           ##conencter
+           courriel = request.form["courriel"]
+           mdp = request.form["mdp"]
+           err = ["Le courriel et/ou le nom d'usager sont erronés"]
+           if courriel == "" or mdp == "":
+               return render_template("login.html", erreurs=err)
+           
        else:
            return redirect("/user_page") # TODO. check le hub
     else:
