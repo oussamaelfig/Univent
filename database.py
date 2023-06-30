@@ -14,16 +14,24 @@ class Database:
         if self.connection is not None:
             self.connection.close()
 
-    def creer_new_evenement(self, creator_id, title, start_date_time,
-                            end_date_time,
-                            location, flyer_image_name, description):
+    def creer_new_evenement(
+        self,
+        creator_id,
+        title,
+        start_date_time,
+        end_date_time,
+        location,
+        flyer_image_name,
+        description,
+        max_registration,
+    ):
         connect = self.get_connexion()
         cursor = connect.cursor()
-        # Insert event into the database
         cursor.execute(
             "INSERT INTO Events (creator_id, title, start_date_time, "
-            "end_date_time, location, flyer_image, description) VALUES (?, "
-            "?, ?, ?, ?, ?, ?)",
+            "end_date_time, location, flyer_image, description, "
+            "max_registration) VALUES (?,"
+            "?, ?, ?, ?, ?, ?, ?)",
             (
                 creator_id,
                 title,
@@ -32,6 +40,7 @@ class Database:
                 location,
                 flyer_image_name,
                 description,
+                max_registration,
             ),
         )
         connect.commit()

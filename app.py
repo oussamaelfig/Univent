@@ -1,8 +1,8 @@
-import sqlite3
-from flask import Flask, render_template, request, g, session
-from werkzeug.utils import secure_filename
-from database import Database
 import re
+import sqlite3
+from database import Database
+from flask import Flask, g, render_template, request, session
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 
@@ -47,6 +47,7 @@ def create_event():
         end_date_time = request.form["end_date_time"]
         location = request.form["location"]
         description = request.form["description"]
+        max_registration = request.form["max_registration"]
 
         # Handle the image upload
         flyer_image = request.files["flyer_image"]
@@ -54,18 +55,13 @@ def create_event():
             flyer_image_name = secure_filename(flyer_image.filename)
             flyer_image.save("db/flyerImages" + flyer_image_name)
 
-        # TODO: Trouver une facon pour Get le creator_id
-        #  mettre en place un mécanisme pour obtenir l'identifiant de
-        #  l'utilisateur actuellement connecté qui est en train de créer
-        #  l'événement. Cela pourrait être fait en utilisant un système
-        #  d'authentification et de session.
         creator_id = 1
-        # utilise la class Database pour faire le traitement.
         get_db().creer_new_evenement(creator_id, title, start_date_time,
                                      end_date_time,
-                                     location, flyer_image_name, description)
+                                     location, flyer_image_name, description,
+                                     max_registration)
 
-        return "Event created successfully"
+        return "Événement créé avec succès"
 
     return render_template("create_event.html")
 
