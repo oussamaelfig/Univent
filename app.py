@@ -23,6 +23,17 @@ def authentication_required(f):
         return f(*args, **kwargs)
     return decorated
 
+def organisation_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if not is_organisation(session):
+            return send_unauthorized()
+        return f(*args, **kwargs)
+    return decorated
+
+def is_organisation(sessionId):
+    return get_db().get_type_compte_from_session_id(session["id"])[0] == 0
+
 # Ne regarde pas le type d'utilisateur. Seulement qu'il soit authentifié
 def is_authenticated(session):
     if ("id" in session and
@@ -32,7 +43,8 @@ def is_authenticated(session):
     return False
 
 def send_unauthorized():
-    return redirect("/login", 401)
+    return render_template("erreur.html", err="401"), 401
+
 
 @app.errorhandler(404)
 def retourner404(err):
@@ -73,6 +85,7 @@ def about():
 
 @app.route("/create_event", methods=["GET", "POST"])
 @authentication_required
+@organisation_required
 def create_event():
     if request.method == "POST":
         title = request.form["title"]
@@ -159,7 +172,10 @@ def connecter():
        else:
            return redirect("/user_page/" + get_db().get_id_user_from_id_session(session["id"]))
     else:
-        return render_template("login.html") 
+        if "id" not in session:
+            return render_template("login.html") 
+        return redirect("/user_page/" + get_db().get_id_user_from_id_session(session["id"]))
+        
         
 
 @app.route("/user_page/<identifiant>")

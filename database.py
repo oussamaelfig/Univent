@@ -51,6 +51,17 @@ class Database:
         cursor.execute("select userId from sessions where identifiant=?", (id_session, ))
         return cursor.fetchone()
     
+    def get_session_id_from_id_session(self, id_session):
+        cursor = self.get_connexion().cursor()
+        cursor.execute("select identifiant from sessions where identifiant=?", (id_session,))
+        return cursor.fetchone()
+    
+    def get_type_compte_from_session_id(self, id_session):
+        id_user = self.get_id_user_from_id_session(id_session)
+        cursor = self.get_connexion().cursor()
+        cursor.execute("select typeCompte from users where identifiant=?", (id_user[0], ))
+        return cursor.fetchone()
+    
     #### Table events #####
     def creer_new_evenement(self, creator_id, title, start_date_time,
                             end_date_time,
