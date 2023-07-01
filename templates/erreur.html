@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}
+UNIVENT - Erreur
+{% endblock %}
+{% block content %}
+{% if err == "404" %}
+<div class="container-fluid text-center pt-3 pb-4">
+    <h1 class="pt-5">Oups! Il n'y a rien à voir ici! (404)</h1>
+    <small class="text-secondary">La page que vous recherchez ne semble pas exister.</small>
+</div>
+{% elif err == "400" %}
+<div class="container-fluid text-center pt-3 pb-4">
+    <h1 class="pt-5">Votre requête est n'est pas bien formée (400)</h1>
+</div>
+{% else %}
+<div class="container-fluid text-center pt-3 pb-4">
+    <h1 class="pt-5">Une erreur interne s'est produite (500)</h1>
+    <small class="text-secondary">L'équipe de développement sera avisée...</small>
+</div>
+{% endif %}
+{% endblock %}

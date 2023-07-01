@@ -34,6 +34,17 @@ def is_authenticated(session):
 def send_unauthorized():
     return redirect("/login", 401)
 
+@app.errorhandler(404)
+def retourner404(err):
+    return render_template("erreur.html", err="404"), 404
+
+@app.errorhandler(400)
+def retourner400(err):
+    return render_template("erreur.html", err="400"), 400
+
+@app.errorhandler(500)
+def retourner500(err):
+    return render_template("erreur.html", err="500"), 500
 
 @app.teardown_appcontext
 def close_db(exeption):
@@ -151,7 +162,7 @@ def connecter():
         return render_template("login.html") 
         
 
-@app.route("/user_succes/<identifiant>")
+@app.route("/user_page/<identifiant>")
 def afficher_page_user(identifiant):
     return render_template("page_user.html")
 

@@ -43,7 +43,8 @@ class Database:
     def creer_session(self, sessionId, userId):
         connection = self.get_connexion()
         cursor = connection.cursor()
-        cursor.execute("insert into sessions values(identifiant, userId)")
+        cursor.execute("insert into sessions (identifiant, userId) values(?,?)", (sessionId, userId, ))
+        connection.commit()
         
     def get_id_user_from_id_session(self, id_session):
         cursor = self.get_connexion().cursor()
