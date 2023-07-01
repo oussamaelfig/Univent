@@ -60,8 +60,8 @@ def contact():  # put application's code here
 def about():
     return render_template("about.html")
 
-@authentication_required
 @app.route("/create_event", methods=["GET", "POST"])
+@authentication_required
 def create_event():
     if request.method == "POST":
         title = request.form["title"]
