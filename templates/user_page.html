@@ -25,7 +25,69 @@ UNIVENT - Accueil
                 <a class="nav-link" id="user-events-tab" data-bs-toggle="tab" href="#user-events">Événements Créés</a>
             </li>
         </ul>
+        <div class="tab-content">
+            <!-- User Info Tab -->
+            <div class="tab-pane fade show active" id="user-info">
 
+            </div>
+
+            <!-- User Events Tab -->
+            <div class="tab-pane fade" id="user-events">
+                <!-- User-created events table -->
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">Titre de l'événement</th>
+                            <th scope="col">Date et heure de début</th>
+                            <th scope="col">Date et heure de fin</th>
+                            <th scope="col">Lieu</th>
+                            <th scope="col">Description</th>
+                            <th scope="col">Nombre maximum d'inscriptions</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Event 1</td>
+                            <td>2023-07-01 10:00 AM</td>
+                            <td>2023-07-01 12:00 PM</td>
+                            <td>Location 1</td>
+                            <td>Description 1</td>
+                            <td>50</td>
+                            <td>
+                                <button class="btn btn-primary">Modify</button>
+                                <button class="btn btn-danger">Delete</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Event 2</td>
+                            <td>2023-07-02 3:00 PM</td>
+                            <td>2023-07-02 5:00 PM</td>
+                            <td>Location 2</td>
+                            <td>Description 2</td>
+                            <td>30</td>
+                            <td>
+                                <button class="btn btn-primary">Modify</button>
+                                <button class="btn btn-danger">Delete</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Event 3</td>
+                            <td>2023-07-03 9:00 AM</td>
+                            <td>2023-07-03 11:00 AM</td>
+                            <td>Location 3</td>
+                            <td>Description 3</td>
+                            <td>20</td>
+                            <td>
+                                <button class="btn btn-primary">Modify</button>
+                                <button class="btn btn-danger">Delete</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
 </div>
 
 {% endblock %}
