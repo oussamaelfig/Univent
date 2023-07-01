@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}
+UNIVENT - Accueil
+{% endblock %}
+{% block content %}
+<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+
+<!-- User Portal -->
+<div class="container px-5 my-5">
+    <div class="d-flex align-items-center mb-4">
+        <img src=".././static/images/avatar.png" class="rounded-circle me-3" alt="User Avatar" width="10%" height="10%">
+        <div>
+            <h4 class="fw-bold">User Name</h4>
+            <h5 class="fw-normal">Courriel</h5>
+            <h6 class="fw-light">Type de compte</h6>
+        </div>
+    </div>
+    <ul class="nav nav-tabs">
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link active" id="user-info-tab" data-bs-toggle="tab" href="#user-info">Informations
+                    Utilisateur</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="user-events-tab" data-bs-toggle="tab" href="#user-events">Événements Créés</a>
+            </li>
+        </ul>
+
+</div>
+
+{% endblock %}
