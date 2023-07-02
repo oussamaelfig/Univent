@@ -1,16 +1,13 @@
-﻿image: python:3.10
+image: python:3.10
 
 stages:
-  
-test
+  - "test"
 
 before_script:
-  
-python -V  # Imprimer la version de python pour le débogage
-pip install -r requirements.txt
+  - python -V  # Imprimer la version de python pour le débogage
+  - pip install -r requirements.txt
 
 test:
   stage: test
   script:
-    
-python -m unittest discover
+    - python -m unittest discover
