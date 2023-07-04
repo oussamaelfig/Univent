@@ -18,47 +18,58 @@ class Database:
     def creer_user(self, identifiant, nom, courriel, type_c, hache, salt):
         connection = self.get_connexion()
         cursor = connection.cursor()
-        cursor.execute(
-            "insert into users(identifiant, nom, typeCompte, courriel, hache, salt)"
-            "values(?,?,?,?,?,?)",
-            (
-                identifiant,
-                nom,
-                type_c,
-                courriel,
-                hache,
-                salt,
-            ),
-        )
+        cursor.execute("insert into users(identifiant, nom, typeCompte, "
+                       "courriel, hache, salt)"
+                       "values(?,?,?,?,?,?)",
+                       (identifiant, nom, type_c, courriel, hache, salt,))
         connection.commit()
 
     def get_user_from_iden(self, ident):
         cursor = self.get_connexion().cursor()
-        cursor.execute("select identifiant from users where identifiant = ?", (ident,))
+        cursor.execute("select identifiant from users where identifiant = ?",
+                       (ident,))
         return cursor.fetchone()
 
     def get_user_from_courriel(self, courriel):
         cursor = self.get_connexion().cursor()
-        cursor.execute("select identifiant from users where courriel = ?", (courriel,))
+        cursor.execute("select identifiant from users where courriel = ?",
+                       (courriel,))
         return cursor.fetchone()
 
     def get_user_pass_from_courriel(self, courriel):
         cursor = self.get_connexion().cursor()
-        cursor.execute(
-            "select hache, salt, identifiant from users where courriel = ?", (courriel,)
-        )
+        cursor.execute("select hache, salt, identifiant from users where "
+                       "courriel = ?", (courriel,))
         return cursor.fetchone()
 
     #### Table sessions ####
     def creer_session(self, sessionId, userId):
         connection = self.get_connexion()
         cursor = connection.cursor()
-        cursor.execute("insert into sessions values(identifiant, userId)")
+        cursor.execute(
+            "insert into sessions (identifiant, userId) values(?,?)",
+            (sessionId, userId,))
+        connection.commit()
 
     def get_id_user_from_id_session(self, id_session):
         cursor = self.get_connexion().cursor()
-        cursor.execute("select userId from sessions where identifiant=?", (id_session,))
+        cursor.execute("select userId from sessions where identifiant=?",
+                       (id_session,))
         return cursor.fetchone()
+
+    def get_session_id_from_id_session(self, id_session):
+        cursor = self.get_connexion().cursor()
+        cursor.execute("select identifiant from sessions where identifiant=?",
+                       (id_session,))
+        return cursor.fetchone()
+
+    def get_type_compte_from_session_id(self, id_session):
+        id_user = self.get_id_user_from_id_session(id_session)
+        cursor = self.get_connexion().cursor()
+        cursor.execute("select typeCompte from users where identifiant=?",
+                       (id_user[0],))
+        return cursor.fetchone()
+
 
     #### Table events #####
     def get_all_events(self):

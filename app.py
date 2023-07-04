@@ -27,13 +27,30 @@ def get_db():
         g._database = Database()
     return g._database
 
+
 def authentication_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         if not is_authenticated(session):
             return send_unauthorized()
         return f(*args, **kwargs)
+
     return decorated
+
+
+def organisation_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if not is_organisation(session):
+            return send_unauthorized()
+        return f(*args, **kwargs)
+
+    return decorated
+
+
+def is_organisation(sessionId):
+    return get_db().get_type_compte_from_session_id(session["id"])[0] == 0
+
 
 # Ne regarde pas le type d'utilisateur. Seulement qu'il soit authentifié
 def is_authenticated(session):
@@ -43,8 +60,24 @@ def is_authenticated(session):
         return True
     return False
 
+
 def send_unauthorized():
-    return redirect("/login", 401)
+    return render_template("erreur.html", err="401"), 401
+
+
+@app.errorhandler(404)
+def retourner404(err):
+    return render_template("erreur.html", err="404"), 404
+
+
+@app.errorhandler(400)
+def retourner400(err):
+    return render_template("erreur.html", err="400"), 400
+
+
+@app.errorhandler(500)
+def retourner500(err):
+    return render_template("erreur.html", err="500"), 500
 
 
 @app.teardown_appcontext
@@ -72,8 +105,10 @@ def contact():  # put application's code here
 def about():
     return render_template("about.html")
 
-@authentication_required
+
 @app.route("/create_event", methods=["GET", "POST"])
+@authentication_required
+@organisation_required
 def create_event():
     if request.method == "POST":
         title = request.form["title"]
@@ -165,6 +200,7 @@ def delete_event(event_id):
 def afficher_succes():
     return render_template("succes_compte.html")
 
+
 @app.route("/create_account", methods=["GET", "POST"])
 def creer_compte():
     if request.method == "POST":
@@ -180,55 +216,68 @@ def creer_compte():
         err = valider_compte(nom, courriel)
         err2 = valider_mdp(mdp, mdp_conf)
         for e in err2:
+        for e in err2:
             err.append(e)
         if len(err) != 0:
             return render_template("create_account.html", erreurs=err)
+            return render_template("create_account.html", erreurs=err)
         identifiant = uuid.uuid4().hex
-        while(get_db().get_user_from_iden(identifiant) is not None):
+        while (get_db().get_user_from_iden(identifiant) is not None):
             identifiant = uuid.uuid4().hex
         salt = uuid.uuid4().hex
         hache = hashlib.sha512(str(mdp + salt).encode("utf-8")).hexdigest()
-        get_db().creer_user(identifiant, nom, courriel, type_compte, hache, salt)
+        get_db().creer_user(identifiant, nom, courriel, type_compte, hache,
+                            salt)
         return redirect('/succes_compte')
     if "id" in session:
-        return redirect("/user_page/" + get_db().get_id_user_from_id_session(session["id"]))
+        return redirect("/user_page/" + get_db().get_id_user_from_id_session(
+            session["id"]))
     return render_template("create_account.html")
+
 
 @app.route("/login", methods=["POST", "GET"])
 def connecter():
     if request.method == "POST":
-       if "id" not in session:
+        if "id" not in session:
             courriel = request.form["courriel"]
             mdp = request.form["mdp"]
             err = ["Le courriel et/ou le nom d'usager sont erronés"]
             if courriel == "" or mdp == "" or len(courriel) > 100:
-               return render_template("login.html", erreurs=err)
+                return render_template("login.html", erreurs=err)
             utilisateur = get_db().get_user_pass_from_courriel(courriel)
             if utilisateur is None:
                 return render_template("login.html", erreurs=err)
             salt = utilisateur[1]
-            mdp_entre = hashlib.sha512(str(mdp + salt).encode("utf-8")).hexdigest()
+            mdp_entre = hashlib.sha512(
+                str(mdp + salt).encode("utf-8")).hexdigest()
             if mdp_entre == utilisateur[0]:
                 id_session = uuid.uuid4().hex
                 get_db().creer_session(id_session, utilisateur[2])
                 session["id"] = id_session
-                return redirect("/user_page/"+ utilisateur[2])
-       else:
-           return redirect("/user_page/" + get_db().get_id_user_from_id_session(session["id"]))
+                return redirect("/user_page/" + utilisateur[2])
+        else:
+            return redirect(
+                "/user_page/" + get_db().get_id_user_from_id_session(
+                    session["id"]))
     else:
-        return render_template("login.html")
+        if "id" not in session:
+            return render_template("login.html")
+        return redirect("/user_page/" + get_db().get_id_user_from_id_session(
+            session["id"]))
 
 
-@app.route("/user_succes/<identifiant>")
+@app.route("/user_page/<identifiant>")
 def afficher_page_user(identifiant):
     return render_template("page_user.html")
+
 
 def valider_compte(nom, courriel):
     err = []
     regex = r'([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+'
     if nom == "" or len(nom) > 100:
         err.append("Le nom entré est invalide (100 caractères maximum).")
-    if courriel == "" or len(courriel) > 100 or not re.fullmatch(regex, courriel): #REGEX EST COURRIEL.
+    if courriel == "" or len(courriel) > 100 or not re.fullmatch(regex,
+                                                                 courriel):  # REGEX EST COURRIEL.
         err.append("Le courriel entré est invalide.")
     return err
 
@@ -250,6 +299,7 @@ def valider_mdp(mdp, mdp2):
         if c in punctuation and not a_err:
             return err
     if not a_err:
+        err.append("Le mot de passe entré est invalide.")
         err.append("Le mot de passe entré est invalide.")
     if mdp != mdp2:
         err.append("Les deux mots de passe ne concordent pas.")
