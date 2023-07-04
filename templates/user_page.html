@@ -5,6 +5,19 @@ UNIVENT - Accueil
 {% block content %}
 <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
 
+<div class="container">
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <strong>{{ message }}</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+</div>
+
 <!-- User Portal -->
 <div class="container px-5 my-5">
     <div class="d-flex align-items-center mb-4">
@@ -47,47 +60,110 @@ UNIVENT - Accueil
                         </tr>
                     </thead>
                     <tbody>
+                        {% for event in events %}
                         <tr>
-                            <td>Event 1</td>
-                            <td>2023-07-01 10:00 AM</td>
-                            <td>2023-07-01 12:00 PM</td>
-                            <td>Location 1</td>
-                            <td>Description 1</td>
-                            <td>50</td>
+                            <td>{{ event[2] }}</td> <!-- event[2] represents the title -->
+                            <td>{{ event[3] }}</td> <!-- event[3] represents the start_date_time -->
+                            <td>{{ event[4] }}</td> <!-- event[4] represents the end_date_time -->
+                            <td>{{ event[5] }}</td> <!-- event[5] represents the location -->
+                            <td>{{ event[7] }}</td> <!-- event[7] represents the description -->
+                            <td>{{ event[8] }}</td> <!-- event[8] represents the max_registration -->
                             <td>
-                                <button class="btn btn-primary">Modify</button>
-                                <button class="btn btn-danger">Delete</button>
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                    data-bs-target="#modifyEvent{{ event[0] }}">Modify</button>
+                                <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                                    data-bs-target="#deleteEvent{{ event[0] }}">Delete</button>
                             </td>
                         </tr>
-                        <tr>
-                            <td>Event 2</td>
-                            <td>2023-07-02 3:00 PM</td>
-                            <td>2023-07-02 5:00 PM</td>
-                            <td>Location 2</td>
-                            <td>Description 2</td>
-                            <td>30</td>
-                            <td>
-                                <button class="btn btn-primary">Modify</button>
-                                <button class="btn btn-danger">Delete</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Event 3</td>
-                            <td>2023-07-03 9:00 AM</td>
-                            <td>2023-07-03 11:00 AM</td>
-                            <td>Location 3</td>
-                            <td>Description 3</td>
-                            <td>20</td>
-                            <td>
-                                <button class="btn btn-primary">Modify</button>
-                                <button class="btn btn-danger">Delete</button>
-                            </td>
-                        </tr>
+                        <!-- Delete Event Modal -->
+                        <div class="modal fade" id="deleteEvent{{ event[0] }}" tabindex="-1"
+                            aria-labelledby="deleteEventLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="deleteEventLabel">Delete Event</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p>Are you sure you want to delete the event "{{ event[2] }}"?</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary"
+                                            data-bs-dismiss="modal">Cancel</button>
+                                        <form action="/delete_event/{{ event[0] }}" method="POST"
+                                            style="display: inline;">
+                                            <button class="btn btn-danger" type="submit">Delete</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
                     </tbody>
                 </table>
 
+                {% for event in events %}
+                <!-- Modal -->
+                <div class="modal fade" id="modifyEvent{{ event[0] }}" tabindex="-1" aria-labelledby="modifyEventLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="modifyEventLabel">Modify Event</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="modifyEventForm{{ event[0] }}" action="/modify_event/{{ event[0] }}"
+                                    method="POST">
+                                    <div class="mb-3">
+                                        <label for="title" class="form-label">Title</label>
+                                        <input type="text" class="form-control" name="title" id="title"
+                                            placeholder="Enter event title" value="{{ event[2] }}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="start_date_time" class="form-label">Start Date/Time</label>
+                                        <input type="datetime-local" class="form-control" name="start_date_time"
+                                            id="start_date_time" value="{{ event[3] }}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="end_date_time" class="form-label">End Date/Time</label>
+                                        <input type="datetime-local" class="form-control" name="end_date_time"
+                                            id="end_date_time" value="{{ event[4] }}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="location" class="form-label">Location</label>
+                                        <input type="text" class="form-control" name="location" id="location"
+                                            placeholder="Enter event location" value="{{ event[5] }}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="flyer_image" class="form-label">Flyer Image</label>
+                                        <input type="file" class="form-control" name="flyer_image" id="flyer_image">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="description" class="form-label">Description</label>
+                                        <textarea class="form-control" name="description" id="description" rows="3"
+                                            placeholder="Enter event description">{{ event[7] }}</textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="max_registration" class="form-label">Max Registration</label>
+                                        <input type="number" class="form-control" name="max_registration"
+                                            id="max_registration" placeholder="Enter maximum registration"
+                                            value="{{ event[8] }}">
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Save changes</button>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
             </div>
         </div>
+    </ul>
 </div>
-
 {% endblock %}

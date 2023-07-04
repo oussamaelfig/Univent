@@ -1,11 +1,23 @@
-import sqlite3
-from flask import Flask, render_template, request, g, session, redirect, Response
-from werkzeug.utils import secure_filename
-from database import Database
-from functools import wraps
-import uuid
 import hashlib
 import re
+import sqlite3
+import uuid
+from functools import wraps
+
+from database import Database
+from flask import (
+    Flask,
+    Response,
+    flash,
+    g,
+    jsonify,
+    redirect,
+    render_template,
+    request,
+    session,
+    url_for,
+)
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 
@@ -84,13 +96,69 @@ def create_event():
         #  d'authentification et de session.
         creator_id = 1
         # utilise la class Database pour faire le traitement.
-        get_db().creer_new_evenement(creator_id, title, start_date_time,
-                                     end_date_time,
-                                     location, flyer_image_name, description)
+        get_db().creer_new_evenement(
+            creator_id,
+            title,
+            start_date_time,
+            end_date_time,
+            location,
+            flyer_image_name,
+            description,
+        )
 
-        return "Event created successfully"
+        # Flash message
+        flash("Votre évenement a été créé !", "success")
+        # Redirect to the user page
+        return redirect(url_for("user_page"))
 
     return render_template("create_event.html")
+
+
+@app.route("/user_page", methods=["GET", "POST"])
+def user_page():
+    events = get_db().get_all_events()
+    return render_template("user_page.html", events=events)
+
+
+@app.route("/modify_event/<int:event_id>", methods=["POST"])
+def modify_event(event_id):
+    if request.method == "POST":
+        title = request.form.get("title")
+        start_date_time = request.form.get("start_date_time")
+        end_date_time = request.form.get("end_date_time")
+        location = request.form.get("location")
+        description = request.form.get("description")
+        max_registration = request.form.get("max_registration")
+
+        flyer_image_name = None
+
+        flyer_image = request.files.get("flyer_image")
+        if flyer_image:
+            flyer_image_name = secure_filename(flyer_image.filename)
+            flyer_image.save("db/flyerImages/" + flyer_image_name)
+
+        # utilise la class Database pour faire le traitement.
+        get_db().modify_event(
+            event_id,
+            title,
+            start_date_time,
+            end_date_time,
+            location,
+            flyer_image_name,
+            description,
+            max_registration,
+        )
+        flash(f"Modification de l'événement '{title}' effectuée !", "success")
+        return redirect(url_for("user_page"))
+
+
+@app.route("/delete_event/<int:event_id>", methods=["POST"])
+def delete_event(event_id):
+    event = get_db().get_event_by_id(event_id)
+    get_db().delete_event(event_id)
+
+    flash(f"Événement '{event[2]}' supprimé !", "success")
+    return redirect(url_for("user_page"))
 
 
 @app.route("/succes_compte")
@@ -111,10 +179,10 @@ def creer_compte():
             return render_template("create_account.html", erreurs=err)
         err = valider_compte(nom, courriel)
         err2 = valider_mdp(mdp, mdp_conf)
-        for e in err2:  
+        for e in err2:
             err.append(e)
         if len(err) != 0:
-            return render_template("create_account.html", erreurs=err) 
+            return render_template("create_account.html", erreurs=err)
         identifiant = uuid.uuid4().hex
         while(get_db().get_user_from_iden(identifiant) is not None):
             identifiant = uuid.uuid4().hex
@@ -148,8 +216,8 @@ def connecter():
        else:
            return redirect("/user_page/" + get_db().get_id_user_from_id_session(session["id"]))
     else:
-        return render_template("login.html") 
-        
+        return render_template("login.html")
+
 
 @app.route("/user_succes/<identifiant>")
 def afficher_page_user(identifiant):
@@ -182,7 +250,7 @@ def valider_mdp(mdp, mdp2):
         if c in punctuation and not a_err:
             return err
     if not a_err:
-        err.append("Le mot de passe entré est invalide.")    
+        err.append("Le mot de passe entré est invalide.")
     if mdp != mdp2:
         err.append("Les deux mots de passe ne concordent pas.")
     return err
