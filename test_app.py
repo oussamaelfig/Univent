@@ -120,7 +120,6 @@ class FlaskAppTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 401)
 
     def test_create_event_with_auth(self):
-        self.setUp()
         with self.client.post('/login', data={"courriel": "test@example.com", "mdp": "Password123!"}) as c:
             with c.session_transaction() as sess:
                 sess['identifiant'] = self.test_user_identifiant
