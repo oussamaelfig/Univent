@@ -6,7 +6,7 @@ stages:
 before_script:
   - python -V  # Imprimer la version de python pour le débogage
   - python -m pip install --upgrade pip
-  - pip install --no-cache-dir -r requirements.txt -vvv
+  - pip install --no-cache-dir --no-build-isolation -r requirements.txt
 
 test:
   stage: test
