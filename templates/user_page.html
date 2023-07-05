@@ -27,6 +27,9 @@ UNIVENT - Accueil
             <h6 class="fw-light">Organisation</h6>
             <h5 class="fw-normal">{{ user_info[2] }}</h5>
         </div>
+        <div class="p-2">
+            <button class="btn btn-danger" onclick="deconnecter()">Se déconnecter</button>
+        </div>  
     </div>
     <ul class="nav nav-tabs">
         <ul class="nav nav-tabs">
@@ -74,9 +77,9 @@ UNIVENT - Accueil
                             <td>{{ event[8] }}</td> <!-- event[8] represents the max_registration -->
                             <td>
                                 <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                    data-bs-target="#modifyEvent{{ event[0] }}">Modify</button>
+                                    data-bs-target="#modifyEvent{{ event[0] }}">Modifier</button>
                                 <button type="button" class="btn btn-danger" data-bs-toggle="modal"
-                                    data-bs-target="#deleteEvent{{ event[0] }}">Delete</button>
+                                    data-bs-target="#deleteEvent{{ event[0] }}">Supprimer</button>
                             </td>
                         </tr>
                         <!-- Delete Event Modal -->
@@ -178,4 +181,9 @@ UNIVENT - Accueil
         {% endif %}
     </ul>
 </div>
+<script>
+    function deconnecter(){
+        window.location.replace("/logout")
+    }
+</script>
 {% endblock %}

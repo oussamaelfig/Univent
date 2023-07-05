@@ -258,6 +258,15 @@ def connecter():
         return redirect("/user_page/" + get_db().get_id_user_from_id_session(
             session["id"])[0])
 
+@authentication_required
+@app.route("/logout")
+def deconnecter():
+    get_db().delete_session(session["id"])
+    session["id"] = None;
+    session.pop("id", None)
+    return redirect('/')
+    
+
 
 def valider_compte(nom, courriel):
     err = []
