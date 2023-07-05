@@ -5,18 +5,8 @@ import uuid
 from functools import wraps
 
 from database import Database
-from flask import (
-    Flask,
-    Response,
-    flash,
-    g,
-    jsonify,
-    redirect,
-    render_template,
-    request,
-    session,
-    url_for,
-)
+from flask import (Flask, Response, flash, g, redirect, render_template,
+                   request, session, url_for)
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
@@ -215,7 +205,6 @@ def creer_compte():
             return render_template("create_account.html", erreurs=err)
         err = valider_compte(nom, courriel)
         err2 = valider_mdp(mdp, mdp_conf)
-        for e in err2:
         for e in err2:
             err.append(e)
         if len(err) != 0:
