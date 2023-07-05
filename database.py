@@ -78,13 +78,13 @@ class Database:
 
 
     #### Table events #####
-    def get_all_events(self):
-        connect = self.get_connexion()
-        cursor = connect.cursor()
-        cursor.execute("SELECT * FROM events")
-        events = cursor.fetchall()
-
-        return events
+    # def get_all_events(self):
+    #     connect = self.get_connexion()
+    #     cursor = connect.cursor()
+    #     cursor.execute("SELECT * FROM events")
+    #     events = cursor.fetchall()
+    #
+    #     return events
 
     def get_event_by_id(self, event_id):
         connect = self.get_connexion()

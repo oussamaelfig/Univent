@@ -147,7 +147,8 @@ def create_event():
 def user_page(identifiant):
     user_info = get_db().get_user_info_from_iden(identifiant)
     events = get_db().get_all_events(identifiant)
-    return render_template("user_page.html", events=events, user_info=user_info)
+    return render_template("user_page.html", events=events,
+                           user_info=user_info)
 
 
 @app.route("/modify_event/<int:event_id>", methods=["POST"])
@@ -192,7 +193,7 @@ def delete_event(event_id):
 
     flash(f"Événement '{event[2]}' supprimé !", "success")
     return redirect("/user_page/" + get_db().get_id_user_from_id_session(
-            session["id"])[0])
+        session["id"])[0])
 
 
 @app.route("/succes_compte")
