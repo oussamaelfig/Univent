@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+{% block title %}
+UNIVENT - Accueil
+{% endblock %}
+{% block content %}
+<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+
+<div class="container">
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <strong>{{ message }}</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+</div>
+
+<!-- User Portal -->
+<div class="container px-5 my-5">
+    <div class="d-flex align-items-center mb-4">
+        <img src=".././static/images/avatar.png" class="rounded-circle me-3" alt="User Avatar" width="10%" height="10%">
+        <div>
+            <h4 class="fw-bold">{{ user_info[0] }}</h4>
+            <h6 class="fw-light">Organisation</h6>
+            <h5 class="fw-normal">{{ user_info[2] }}</h5>
+        </div>
+    </div>
+    <ul class="nav nav-tabs">
+        <ul class="nav nav-tabs">
+
+            <li class="nav-item">
+                <a class="nav-link active" id="user-events-tab" data-bs-toggle="tab" href="#user-events">Événements
+                    Créés</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="user-info-tab" data-bs-toggle="tab" href="#user-info">Paramètres</a>
+            </li>
+        </ul>
+        {% if events %}
+        <div class="tab-content">
+            <!-- User Info Tab -->
+            <div class="tab-pane fade" id="user-info">
+
+            </div>
+
+            <!-- User Events Tab -->
+            <div class="tab-pane fade show active" id="user-events">
+
+
+                <!-- User-created events table -->
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">Titre de l'événement</th>
+                            <th scope="col">Date et heure de début</th>
+                            <th scope="col">Date et heure de fin</th>
+                            <th scope="col">Lieu</th>
+                            <th scope="col">Description</th>
+                            <th scope="col">Nombre maximum d'inscriptions</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for event in events %}
+                        <tr>
+                            <td>{{ event[2] }}</td> <!-- event[2] represents the title -->
+                            <td>{{ event[3] }}</td> <!-- event[3] represents the start_date_time -->
+                            <td>{{ event[4] }}</td> <!-- event[4] represents the end_date_time -->
+                            <td>{{ event[5] }}</td> <!-- event[5] represents the location -->
+                            <td>{{ event[7] }}</td> <!-- event[7] represents the description -->
+                            <td>{{ event[8] }}</td> <!-- event[8] represents the max_registration -->
+                            <td>
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                    data-bs-target="#modifyEvent{{ event[0] }}">Modify</button>
+                                <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                                    data-bs-target="#deleteEvent{{ event[0] }}">Delete</button>
+                            </td>
+                        </tr>
+                        <!-- Delete Event Modal -->
+                        <div class="modal fade" id="deleteEvent{{ event[0] }}" tabindex="-1"
+                            aria-labelledby="deleteEventLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="deleteEventLabel">Delete Event</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p>Are you sure you want to delete the event "{{ event[2] }}"?</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary"
+                                            data-bs-dismiss="modal">Cancel</button>
+                                        <form action="/delete_event/{{ event[0] }}" method="POST"
+                                            style="display: inline;">
+                                            <button class="btn btn-danger" type="submit">Delete</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                {% for event in events %}
+                <!-- Modal -->
+                <div class="modal fade" id="modifyEvent{{ event[0] }}" tabindex="-1" aria-labelledby="modifyEventLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="modifyEventLabel">Modify Event</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="modifyEventForm{{ event[0] }}" action="/modify_event/{{ event[0] }}"
+                                    method="POST">
+                                    <div class="mb-3">
+                                        <label for="title" class="form-label">Title</label>
+                                        <input type="text" class="form-control" name="title" id="title"
+                                            placeholder="Enter event title" value="{{ event[2] }}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="start_date_time" class="form-label">Start Date/Time</label>
+                                        <input type="datetime-local" class="form-control" name="start_date_time"
+                                            id="start_date_time" value="{{ event[3] }}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="end_date_time" class="form-label">End Date/Time</label>
+                                        <input type="datetime-local" class="form-control" name="end_date_time"
+                                            id="end_date_time" value="{{ event[4] }}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="location" class="form-label">Location</label>
+                                        <input type="text" class="form-control" name="location" id="location"
+                                            placeholder="Enter event location" value="{{ event[5] }}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="flyer_image" class="form-label">Flyer Image</label>
+                                        <input type="file" class="form-control" name="flyer_image" id="flyer_image">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="description" class="form-label">Description</label>
+                                        <textarea class="form-control" name="description" id="description" rows="3"
+                                            placeholder="Enter event description">{{ event[7] }}</textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="max_registration" class="form-label">Max Registration</label>
+                                        <input type="number" class="form-control" name="max_registration"
+                                            id="max_registration" placeholder="Enter maximum registration"
+                                            value="{{ event[8] }}">
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Save changes</button>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+
+
+            </div>
+        </div>
+        {% else %}
+        <div class="container pt-5">
+            <span>Vous n'avez aucun événement actif</span>
+        </div>
+
+        {% endif %}
+    </ul>
+</div>
+{% endblock %}

@@ -1,12 +1,13 @@
-import sqlite3
-from flask import Flask, render_template, request, g, session, redirect, \
-    Response
-from werkzeug.utils import secure_filename
-from database import Database
-from functools import wraps
-import uuid
 import hashlib
 import re
+import sqlite3
+import uuid
+from functools import wraps
+
+from database import Database
+from flask import (Flask, Response, flash, g, redirect, render_template,
+                   request, session, url_for)
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 
@@ -85,11 +86,6 @@ def faq():  # put application's code here
     return render_template("faq.html")
 
 
-@app.route("/contact")
-def contact():  # put application's code here
-    return render_template("contact.html")
-
-
 @app.route("/about")
 def about():
     return render_template("about.html")
@@ -105,6 +101,7 @@ def create_event():
         end_date_time = request.form["end_date_time"]
         location = request.form["location"]
         description = request.form["description"]
+        max_registration = request.form["max_registration"]
 
         flyer_image_name = None
 
@@ -118,15 +115,80 @@ def create_event():
         #  l'utilisateur actuellement connecté qui est en train de créer
         #  l'événement. Cela pourrait être fait en utilisant un système
         #  d'authentification et de session.
-        creator_id = 1
+        creator_id = get_db().get_id_user_from_id_session(session['id'])[0]
         # utilise la class Database pour faire le traitement.
-        get_db().creer_new_evenement(creator_id, title, start_date_time,
-                                     end_date_time,
-                                     location, flyer_image_name, description)
+        get_db().creer_new_evenement(
+            creator_id,
+            title,
+            start_date_time,
+            end_date_time,
+            location,
+            flyer_image_name,
+            description,
+            max_registration
+        )
 
-        return "Event created successfully"
+        # Flash message
+        flash("Votre évenement a été créé !", "success")
+        # Redirect to the user page
+        return redirect("/user_page/" + get_db().get_id_user_from_id_session(
+            session["id"])[0])
 
     return render_template("create_event.html")
+
+
+@app.route("/user_page/<identifiant>", methods=["GET", "POST"])
+@authentication_required
+def user_page(identifiant):
+    user_info = get_db().get_user_info_from_iden(identifiant)
+    events = get_db().get_all_events(identifiant)
+    return render_template("user_page.html", events=events,
+                           user_info=user_info)
+
+
+@app.route("/modify_event/<int:event_id>", methods=["POST"])
+@authentication_required
+def modify_event(event_id):
+    if request.method == "POST":
+        title = request.form.get("title")
+        start_date_time = request.form.get("start_date_time")
+        end_date_time = request.form.get("end_date_time")
+        location = request.form.get("location")
+        description = request.form.get("description")
+        max_registration = request.form.get("max_registration")
+
+        flyer_image_name = None
+
+        flyer_image = request.files.get("flyer_image")
+        if flyer_image:
+            flyer_image_name = secure_filename(flyer_image.filename)
+            flyer_image.save("db/flyerImages/" + flyer_image_name)
+
+        # utilise la class Database pour faire le traitement.
+        get_db().modify_event(
+            event_id,
+            title,
+            start_date_time,
+            end_date_time,
+            location,
+            flyer_image_name,
+            description,
+            max_registration,
+        )
+        flash(f"Modification de l'événement '{title}' effectuée !", "success")
+        return redirect("/user_page/" + get_db().get_id_user_from_id_session(
+            session["id"])[0])
+
+
+@app.route("/delete_event/<int:event_id>", methods=["POST"])
+@authentication_required
+def delete_event(event_id):
+    event = get_db().get_event_by_id(event_id)
+    get_db().delete_event(event_id)
+
+    flash(f"Événement '{event[2]}' supprimé !", "success")
+    return redirect("/user_page/" + get_db().get_id_user_from_id_session(
+        session["id"])[0])
 
 
 @app.route("/succes_compte")
@@ -162,7 +224,7 @@ def creer_compte():
         return redirect('/succes_compte')
     if "id" in session:
         return redirect("/user_page/" + get_db().get_id_user_from_id_session(
-            session["id"]))
+            session["id"])[0])
     return render_template("create_account.html")
 
 
@@ -189,17 +251,12 @@ def connecter():
         else:
             return redirect(
                 "/user_page/" + get_db().get_id_user_from_id_session(
-                    session["id"]))
+                    session["id"])[0])
     else:
         if "id" not in session:
             return render_template("login.html")
         return redirect("/user_page/" + get_db().get_id_user_from_id_session(
-            session["id"]))
-
-
-@app.route("/user_page/<identifiant>")
-def afficher_page_user(identifiant):
-    return render_template("page_user.html")
+            session["id"])[0])
 
 
 def valider_compte(nom, courriel):

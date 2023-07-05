@@ -41,6 +41,12 @@ class Database:
         cursor.execute("select hache, salt, identifiant from users where "
                        "courriel = ?", (courriel,))
         return cursor.fetchone()
+    
+    def get_user_info_from_iden(self, ident):
+        cursor = self.get_connexion().cursor()
+        cursor.execute("select nom, typeCompte, courriel from users where identifiant = ?",
+                       (ident,))
+        return cursor.fetchone()
 
     #### Table sessions ####
     def creer_session(self, sessionId, userId):
@@ -70,17 +76,50 @@ class Database:
                        (id_user[0],))
         return cursor.fetchone()
 
+
     #### Table events #####
-    def creer_new_evenement(self, creator_id, title, start_date_time,
-                            end_date_time,
-                            location, flyer_image_name, description):
+    # def get_all_events(self):
+    #     connect = self.get_connexion()
+    #     cursor = connect.cursor()
+    #     cursor.execute("SELECT * FROM events")
+    #     events = cursor.fetchall()
+    #
+    #     return events
+
+    def get_event_by_id(self, event_id):
+        connect = self.get_connexion()
+        cursor = connect.cursor()
+        cursor.execute("SELECT * FROM events WHERE event_id = ?", (event_id,))
+        event = cursor.fetchone()
+
+        return event
+
+    def get_all_events(self, creator_id):
+        connect = self.get_connexion()
+        cursor = connect.cursor()
+        print("this")
+
+        # Execute SQL query to retrieve events of a specific user
+        cursor.execute("SELECT * FROM Events WHERE creator_id = ?", (creator_id,))
+        events = cursor.fetchall()
+
+        return events
+
+    def creer_new_evenement(
+        self,
+        creator_id,
+        title,
+        start_date_time,
+        end_date_time,
+        location,
+        flyer_image_name,
+        description,
+        max_registration
+    ):
         connect = self.get_connexion()
         cursor = connect.cursor()
         # Insert event into the database
-        cursor.execute(
-            "INSERT INTO Events (creator_id, title, start_date_time, "
-            "end_date_time, location, flyer_image, description) VALUES (?, "
-            "?, ?, ?, ?, ?, ?)",
+        cursor.execute("INSERT INTO Events (creator_id, title, start_date_time, end_date_time, location, flyer_image, description, max_registration) VALUES (?,?, ?, ?, ?, ?, ?, ?)",
             (
                 creator_id,
                 title,
@@ -89,6 +128,48 @@ class Database:
                 location,
                 flyer_image_name,
                 description,
+                max_registration
             ),
         )
+        connect.commit()
+
+    def modify_event(
+        self,
+        event_id,
+        title,
+        start_date_time,
+        end_date_time,
+        location,
+        flyer_image_name,
+        description,
+        max_registration,
+    ):
+        connect = self.get_connexion()
+        cursor = connect.cursor()
+
+        # Update the event in the database using the event_id and the modified details
+        cursor.execute(
+            "UPDATE Events SET title = ?, start_date_time = ?, end_date_time = ?, location = ?, flyer_image = ?, "
+            "description = ?, max_registration = ? WHERE event_id = ?",
+            (
+                title,
+                start_date_time,
+                end_date_time,
+                location,
+                flyer_image_name,
+                description,
+                max_registration,
+                event_id,
+            ),
+        )
+
+        connect.commit()
+
+    def delete_event(self, event_id):
+        connect = self.get_connexion()
+        cursor = connect.cursor()
+
+        # Delete the event from the database using the event_id
+        cursor.execute("DELETE FROM Events WHERE event_id = ?", (event_id,))
+
         connect.commit()
