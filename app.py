@@ -86,11 +86,6 @@ def faq():  # put application's code here
     return render_template("faq.html")
 
 
-@app.route("/contact")
-def contact():  # put application's code here
-    return render_template("contact.html")
-
-
 @app.route("/about")
 def about():
     return render_template("about.html")
