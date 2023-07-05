@@ -5,7 +5,6 @@ stages:
 
 before_script:
   - python -V  # Imprimer la version de python pour le débogage
-  - python -m pip install --upgrade pip
   - export MAX_WORKERS=2
   - pip install --no-cache-dir --no-build-isolation -r requirements.txt
 
