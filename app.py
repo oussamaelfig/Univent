@@ -218,7 +218,6 @@ def creer_compte():
             err.append(e)
         if len(err) != 0:
             return render_template("create_account.html", erreurs=err)
-            return render_template("create_account.html", erreurs=err)
         identifiant = uuid.uuid4().hex
         while (get_db().get_user_from_iden(identifiant) is not None):
             identifiant = uuid.uuid4().hex
@@ -292,7 +291,6 @@ def valider_mdp(mdp, mdp2):
         if c in punctuation and not a_err:
             return err
     if not a_err:
-        err.append("Le mot de passe entré est invalide.")
         err.append("Le mot de passe entré est invalide.")
     if mdp != mdp2:
         err.append("Les deux mots de passe ne concordent pas.")
