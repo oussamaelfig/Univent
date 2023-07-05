@@ -41,6 +41,12 @@ class Database:
         cursor.execute("select hache, salt, identifiant from users where "
                        "courriel = ?", (courriel,))
         return cursor.fetchone()
+    
+    def get_user_info_from_iden(self, ident):
+        cursor = self.get_connexion().cursor()
+        cursor.execute("select nom, typeCompte, courriel from users where identifiant = ?",
+                       (ident,))
+        return cursor.fetchone()
 
     #### Table sessions ####
     def creer_session(self, sessionId, userId):
@@ -88,16 +94,16 @@ class Database:
 
         return event
 
-    # def get_all_events(self, creator_id):
-    #     connect = self.get_connexion()
-    #     cursor = connect.cursor()
-    #     print("this")
+    def get_all_events(self, creator_id):
+        connect = self.get_connexion()
+        cursor = connect.cursor()
+        print("this")
 
-    #     # Execute SQL query to retrieve events of a specific user
-    #     cursor.execute("SELECT * FROM Events WHERE creator_id = ?", (creator_id,))
-    #     events = cursor.fetchall()
+        # Execute SQL query to retrieve events of a specific user
+        cursor.execute("SELECT * FROM Events WHERE creator_id = ?", (creator_id,))
+        events = cursor.fetchall()
 
-    #     return events
+        return events
 
     def creer_new_evenement(
         self,
@@ -108,14 +114,12 @@ class Database:
         location,
         flyer_image_name,
         description,
+        max_registration
     ):
         connect = self.get_connexion()
         cursor = connect.cursor()
         # Insert event into the database
-        cursor.execute(
-            "INSERT INTO Events (creator_id, title, start_date_time, "
-            "end_date_time, location, flyer_image, description) VALUES (?, "
-            "?, ?, ?, ?, ?, ?)",
+        cursor.execute("INSERT INTO Events (creator_id, title, start_date_time, end_date_time, location, flyer_image, description, max_registration) VALUES (?,?, ?, ?, ?, ?, ?, ?)",
             (
                 creator_id,
                 title,
@@ -124,6 +128,7 @@ class Database:
                 location,
                 flyer_image_name,
                 description,
+                max_registration
             ),
         )
         connect.commit()

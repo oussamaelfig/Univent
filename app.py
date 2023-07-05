@@ -106,6 +106,7 @@ def create_event():
         end_date_time = request.form["end_date_time"]
         location = request.form["location"]
         description = request.form["description"]
+        max_registration = request.form["max_registration"]
 
         flyer_image_name = None
 
@@ -119,7 +120,7 @@ def create_event():
         #  l'utilisateur actuellement connecté qui est en train de créer
         #  l'événement. Cela pourrait être fait en utilisant un système
         #  d'authentification et de session.
-        creator_id = 1
+        creator_id = get_db().get_id_user_from_id_session(session['id'])[0]
         # utilise la class Database pour faire le traitement.
         get_db().creer_new_evenement(
             creator_id,
@@ -129,23 +130,28 @@ def create_event():
             location,
             flyer_image_name,
             description,
+            max_registration
         )
 
         # Flash message
         flash("Votre évenement a été créé !", "success")
         # Redirect to the user page
-        return redirect(url_for("user_page"))
+        return redirect("/user_page/" + get_db().get_id_user_from_id_session(
+            session["id"])[0])
 
     return render_template("create_event.html")
 
 
-@app.route("/user_page", methods=["GET", "POST"])
-def user_page():
-    events = get_db().get_all_events()
-    return render_template("user_page.html", events=events)
+@app.route("/user_page/<identifiant>", methods=["GET", "POST"])
+@authentication_required
+def user_page(identifiant):
+    user_info = get_db().get_user_info_from_iden(identifiant)
+    events = get_db().get_all_events(identifiant)
+    return render_template("user_page.html", events=events, user_info=user_info)
 
 
 @app.route("/modify_event/<int:event_id>", methods=["POST"])
+@authentication_required
 def modify_event(event_id):
     if request.method == "POST":
         title = request.form.get("title")
@@ -174,16 +180,19 @@ def modify_event(event_id):
             max_registration,
         )
         flash(f"Modification de l'événement '{title}' effectuée !", "success")
-        return redirect(url_for("user_page"))
+        return redirect("/user_page/" + get_db().get_id_user_from_id_session(
+            session["id"])[0])
 
 
 @app.route("/delete_event/<int:event_id>", methods=["POST"])
+@authentication_required
 def delete_event(event_id):
     event = get_db().get_event_by_id(event_id)
     get_db().delete_event(event_id)
 
     flash(f"Événement '{event[2]}' supprimé !", "success")
-    return redirect(url_for("user_page"))
+    return redirect("/user_page/" + get_db().get_id_user_from_id_session(
+            session["id"])[0])
 
 
 @app.route("/succes_compte")
@@ -220,7 +229,7 @@ def creer_compte():
         return redirect('/succes_compte')
     if "id" in session:
         return redirect("/user_page/" + get_db().get_id_user_from_id_session(
-            session["id"]))
+            session["id"])[0])
     return render_template("create_account.html")
 
 
@@ -247,17 +256,12 @@ def connecter():
         else:
             return redirect(
                 "/user_page/" + get_db().get_id_user_from_id_session(
-                    session["id"]))
+                    session["id"])[0])
     else:
         if "id" not in session:
             return render_template("login.html")
         return redirect("/user_page/" + get_db().get_id_user_from_id_session(
-            session["id"]))
-
-
-@app.route("/user_page/<identifiant>")
-def afficher_page_user(identifiant):
-    return render_template("page_user.html")
+            session["id"])[0])
 
 
 def valider_compte(nom, courriel):
