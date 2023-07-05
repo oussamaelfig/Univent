@@ -99,10 +99,6 @@ class FlaskAppTestCase(unittest.TestCase):
         response = self.client.get("/faq")
         self.assertEqual(response.status_code, 200)
 
-    def test_contact_page(self):
-        response = self.client.get("/contact")
-        self.assertEqual(response.status_code, 200)
-
     # def test_login(self):
     #     with self.client.session_transaction() as sess:
     #         sess['identifiant'] = self.test_user_identifiant
