@@ -63,7 +63,7 @@ class FlaskAppTestCase(unittest.TestCase):
 
         # Mise en place d'un utilisateur test
         self.test_user_identifiant = "testUser"
-        self.test_user_password = "password123"
+        self.test_user_password = "Password123!"
         self.test_user_hash = generate_password_hash(self.test_user_password)
         cursor.execute("""
             INSERT INTO users (identifiant, nom, typeCompte, courriel, hache, salt)
@@ -120,7 +120,7 @@ class FlaskAppTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 401)
 
     def test_create_event_with_auth(self):
-        with self.app.test_client() as c:
+        with self.app.client.post('/login', data={courriel: "test@example.com", mdp: "Password123!"}) as c:
             with c.session_transaction() as sess:
                 sess['identifiant'] = self.test_user_identifiant
             response = c.post("/create_event",
