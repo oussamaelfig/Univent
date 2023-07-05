@@ -46,7 +46,7 @@ class FlaskAppTestCase(unittest.TestCase):
 
         # Créer la table Événements
         cursor.execute("""
-            CREATE TABLE IF NOT EXISTS Events
+            CREATE TABLE Events
             (
                 event_id         INTEGER PRIMARY KEY,
                 creator_id       INTEGER,
