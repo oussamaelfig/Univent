@@ -41,11 +41,12 @@ class Database:
         cursor.execute("select hache, salt, identifiant from users where "
                        "courriel = ?", (courriel,))
         return cursor.fetchone()
-    
+
     def get_user_info_from_iden(self, ident):
         cursor = self.get_connexion().cursor()
-        cursor.execute("select nom, typeCompte, courriel from users where identifiant = ?",
-                       (ident,))
+        cursor.execute(
+            "select nom, typeCompte, courriel from users where identifiant = ?",
+            (ident,))
         return cursor.fetchone()
 
     #### Table sessions ####
@@ -105,33 +106,43 @@ class Database:
         print("this")
 
         # Execute SQL query to retrieve events of a specific user
-        cursor.execute("SELECT * FROM Events WHERE creator_id = ?", (creator_id,))
+        cursor.execute("SELECT * FROM Events WHERE creator_id = ?",
+                       (creator_id,))
         events = cursor.fetchall()
 
         return events
 
     def creer_new_evenement(
-        self,
-        creator_id,
-        title,
-        start_date_time,
-        end_date_time,
-        location,
-        flyer_image_name,
-        description,
-        max_registration
+            self,
+            creator_id,
+            title,
+            start_date_time,
+            end_date_time,
+            location,
+            flyer_image,
+            description,
+            max_registration
     ):
         connect = self.get_connexion()
         cursor = connect.cursor()
-        # Insert event into the database
-        cursor.execute("INSERT INTO Events (creator_id, title, start_date_time, end_date_time, location, flyer_image, description, max_registration) VALUES (?,?, ?, ?, ?, ?, ?, ?)",
+
+        # Convertit l'image en un BLOB
+        flyer_image_blob = None
+        if flyer_image:
+            flyer_image_blob = flyer_image.read()
+
+        # Inserer l'evenement dans la database
+        cursor.execute(
+            "INSERT INTO Events (creator_id, title, start_date_time, "
+            "end_date_time, location, flyer_image, description, "
+            "max_registration) VALUES (?,?,?,?,?,?,?,?)",
             (
                 creator_id,
                 title,
                 start_date_time,
                 end_date_time,
                 location,
-                flyer_image_name,
+                flyer_image_blob,
                 description,
                 max_registration
             ),
@@ -139,29 +150,35 @@ class Database:
         connect.commit()
 
     def modify_event(
-        self,
-        event_id,
-        title,
-        start_date_time,
-        end_date_time,
-        location,
-        flyer_image_name,
-        description,
-        max_registration,
+            self,
+            event_id,
+            title,
+            start_date_time,
+            end_date_time,
+            location,
+            flyer_image,
+            description,
+            max_registration,
     ):
         connect = self.get_connexion()
         cursor = connect.cursor()
 
+        # Convertit l'image en un BLOB
+        flyer_image_blob = None
+        if flyer_image:
+            flyer_image_blob = flyer_image.read()
+
         # Update the event in the database using the event_id and the modified details
         cursor.execute(
-            "UPDATE Events SET title = ?, start_date_time = ?, end_date_time = ?, location = ?, flyer_image = ?, "
+            "UPDATE Events SET title = ?, start_date_time = ?, end_date_time "
+            "= ?, location = ?, flyer_image = ?,"
             "description = ?, max_registration = ? WHERE event_id = ?",
             (
                 title,
                 start_date_time,
                 end_date_time,
                 location,
-                flyer_image_name,
+                flyer_image_blob,
                 description,
                 max_registration,
                 event_id,
