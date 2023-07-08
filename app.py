@@ -103,12 +103,11 @@ def create_event():
         description = request.form["description"]
         max_registration = request.form["max_registration"]
 
-        flyer_image_name = None
+        flyer_image_blob = None
 
         flyer_image = request.files["flyer_image"]
         if flyer_image:
-            flyer_image_name = secure_filename(flyer_image.filename)
-            flyer_image.save("db/flyerImages/" + flyer_image_name)
+            flyer_image_blob = flyer_image
 
         # TODO: Trouver une facon pour Get le creator_id
         #  mettre en place un mécanisme pour obtenir l'identifiant de
@@ -123,7 +122,7 @@ def create_event():
             start_date_time,
             end_date_time,
             location,
-            flyer_image_name,
+            flyer_image_blob,
             description,
             max_registration
         )
@@ -157,12 +156,11 @@ def modify_event(event_id):
         description = request.form.get("description")
         max_registration = request.form.get("max_registration")
 
-        flyer_image_name = None
+        flyer_image_blob = None
 
         flyer_image = request.files.get("flyer_image")
         if flyer_image:
-            flyer_image_name = secure_filename(flyer_image.filename)
-            flyer_image.save("db/flyerImages/" + flyer_image_name)
+            flyer_image_blob = flyer_image
 
         # utilise la class Database pour faire le traitement.
         get_db().modify_event(
@@ -171,7 +169,7 @@ def modify_event(event_id):
             start_date_time,
             end_date_time,
             location,
-            flyer_image_name,
+            flyer_image_blob,
             description,
             max_registration,
         )
