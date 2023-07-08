@@ -77,6 +77,12 @@ class Database:
                        (id_user[0],))
         return cursor.fetchone()
 
+    def delete_session(self, id_se):
+        connection = self.get_connexion()
+        cursor = connection.cursor()
+        cursor.execute("delete from sessions where identifiant=?", (id_se, ))
+        connection.commit()
+
     #### Table events #####
     # def get_all_events(self):
     #     connect = self.get_connexion()
