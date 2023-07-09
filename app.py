@@ -104,17 +104,31 @@ def create_event():
         description = request.form["description"]
         max_registration = request.form["max_registration"]
 
+        # Basic validation
+        if not title:
+            flash("Veuillez entrer un Titre à votre événement", "error")
+            return render_template("create_event.html")
+        if not start_date_time or not end_date_time:
+            flash("Les heures de début et de fin sont requises", "error")
+            return render_template("create_event.html")
+        if not location:
+            flash("L'emplacement est requis", "error")
+            return render_template("create_event.html")
+        if not description:
+            flash("La description est obligatoire", "error")
+            return render_template("create_event.html")
+        if not max_registration or int(max_registration) < 1:
+            flash("L'inscription maximale est requise et doit être d'au "
+                  "moins 5 personnes",
+                  "error")
+            return render_template("create_event.html")
+
         flyer_image_blob = None
 
         flyer_image = request.files["flyer_image"]
         if flyer_image:
             flyer_image_blob = flyer_image.read()
 
-            # TODO: Trouver une facon pour Get le creator_id
-        #  mettre en place un mécanisme pour obtenir l'identifiant de
-        #  l'utilisateur actuellement connecté qui est en train de créer
-        #  l'événement. Cela pourrait être fait en utilisant un système
-        #  d'authentification et de session.
         creator_id = get_db().get_id_user_from_id_session(session['id'])[0]
         # utilise la class Database pour faire le traitement.
         event_id = get_db().creer_new_evenement(

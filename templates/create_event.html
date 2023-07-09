@@ -1,68 +1,109 @@
 {% extends "base.html" %}
 {% block title %}
-UNIVENT - Créer un événement
+    UNIVENT - Créer un événement
 {% endblock %}
 {% block content %}
-<!-- Page content-->
-<section class="py-5">
-    <div class="container px-5">
-        <!-- Create event form-->
-        <div class="bg-light rounded-3 py-5 px-4 px-md-5 mb-5">
-            <div class="text-center mb-5">
-                <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3">
-                    <i class="bi bi-calendar-plus"></i>
+    <!-- Page content-->
+    <section class="py-5">
+        <div class="container px-5">
+            <!-- Create event form-->
+            <div class="bg-light rounded-3 py-5 px-4 px-md-5 mb-5">
+                <div class="text-center mb-5">
+                    <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3">
+                        <i class="bi bi-calendar-plus"></i>
+                    </div>
+                    <h1 class="fw-bolder">Créer un nouvel événement</h1>
+                    <p class="lead fw-normal text-muted mb-0">Remplissez les
+                        informations ci-dessous</p>
                 </div>
-                <h1 class="fw-bolder">Créer un nouvel événement</h1>
-                <p class="lead fw-normal text-muted mb-0">Remplissez les
-                    informations ci-dessous</p>
-            </div>
-            <div class="row gx-5 justify-content-center">
-                <div class="col-lg-8 col-xl-6">
-                    <form method="POST" enctype="multipart/form-data">
-                        <div class="mb-3">
-                            <label for="title" class="form-label">Titre de
-                                l'événement</label>
-                            <input type="text" class="form-control" id="title" name="title" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="start_date_time" class="form-label">Date et heure de
-                                début</label>
-                            <input type="datetime-local" class="form-control" id="start_date_time"
-                                name="start_date_time" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="end_date_time" class="form-label">Date
-                                et heure de fin</label>
-                            <input type="datetime-local" class="form-control" id="end_date_time" name="end_date_time"
-                                required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="location" class="form-label">Lieu</label>
-                            <input type="text" class="form-control" id="location" name="location" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="description" class="form-label">Description</label>
-                            <textarea class="form-control" id="description" name="description" rows="3"
-                                required></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label for="flyer_image" class="form-label">Flyer
-                                image (JPG/PNG)</label>
-                            <input type="file" class="form-control" id="flyer_image" name="flyer_image">
-                        </div>
-                        <div class="mb-3">
-                            <label for="max_registration" class="form-label">Nombre maximum
-                                d'inscriptions</label>
-                            <input type="number" class="form-control" id="max_registration" name="max_registration"
-                                min="1" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary">
-                            Créer
-                        </button>
-                    </form>
+                <div class="row gx-5 justify-content-center">
+                    <div class="col-lg-8 col-xl-6">
+                        <form method="POST" enctype="multipart/form-data">
+                            <div class="mb-3">
+                                <label for="title" class="form-label">Titre de
+                                    l'événement</label>
+                                <input type="text" class="form-control"
+                                       id="title" name="title" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="start_date_time"
+                                       class="form-label">Date et heure de
+                                    début</label>
+                                <input type="datetime-local"
+                                       class="form-control"
+                                       id="start_date_time"
+                                       name="start_date_time" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="end_date_time" class="form-label">Date
+                                    et heure de fin</label>
+                                <input type="datetime-local"
+                                       class="form-control" id="end_date_time"
+                                       name="end_date_time" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="location"
+                                       class="form-label">Lieu</label>
+                                <input type="text" class="form-control"
+                                       id="location" name="location" required>
+                                <div id="suggestions"></div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Description</label>
+                                <textarea class="form-control" id="description"
+                                          name="description" rows="3"
+                                          required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="flyer_image" class="form-label">Flyer
+                                    image (JPG/PNG)</label>
+                                <input type="file" class="form-control"
+                                       id="flyer_image" name="flyer_image">
+                            </div>
+                            <div class="mb-3">
+                                <label for="max_registration"
+                                       class="form-label">Nombre maximum
+                                    d'inscriptions</label>
+                                <input type="number" class="form-control"
+                                       id="max_registration"
+                                       name="max_registration" min="1"
+                                       required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                Créer
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
+
+    <script>
+        document.getElementById("location").addEventListener('input', function () {
+            let input = this.value;
+            if (input.length > 3) {
+                fetch('https://api.opencagedata.com/geocode/v1/json?q=' + input + '&key=83076d8a6a844157b1058d9f66340df5')
+                    .then(response => response.json())
+                    .then(data => {
+                        // Clear previous suggestions
+                        document.getElementById('suggestions').innerHTML = '';
+
+                        // Add new suggestions
+                        data.results.forEach(function (result) {
+                            let div = document.createElement('div');
+                            div.textContent = result.formatted;
+                            div.addEventListener('click', function () {
+                                document.getElementById('location').value = result.formatted;
+                                document.getElementById('suggestions').innerHTML = '';
+                            });
+                            document.getElementById('suggestions').appendChild(div);
+                        });
+                    });
+            } else {
+                // Clear suggestions when input is empty
+                document.getElementById('suggestions').innerHTML = '';
+            }
+        });
+    </script>
 {% endblock %}
