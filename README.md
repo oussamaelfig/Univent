@@ -3,7 +3,7 @@
 ![Version](https://img.shields.io/badge/version-hiver2023-success?style=flat)
 ![License](https://img.shields.io/badge/license-Apache2.0-green?style=flat)
 ![Python](https://img.shields.io/badge/-Python-3776AB?style=flat&logo=Python&logoColor=white)
-![Version](https://img.shields.io/badge/version-3.7|3.8|3.9-3776AB?style=flat&)
+![Version](https://img.shields.io/badge/version-3.9|3.10-3776AB?style=flat&)
 ![JavaScript](https://img.shields.io/badge/AJAX-JavaScript-F7DF1E?style=flat&logo=JavaScript&logoColor=white)
 ![Flask](https://img.shields.io/badge/framework-Flask-000000?style=flat&logo=Flask&logoColor=white)
 ![SQLite3](https://img.shields.io/badge/db-SQLite3-003B57?style=flat&logo=SQLite&logoColor=white)
@@ -44,4 +44,10 @@ concerts, des événements sportifs et des réunions sociales. La plateforme
 fournira un espace centralisé pour tous les événements liés à l'UQAM,
 améliorant ainsi la visibilité et l'accessibilité pour tous les membres de la
 communauté universitaire.
+
+### Credentials
+
+DockerHub : https://hub.docker.com
+username : univentuqam
+mdp : qeKKPE*e#yF6ha
 

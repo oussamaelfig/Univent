@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Événements
+{% endblock %}
+
+{% block content %}
+    <style>
+        .transition {
+            transition: all .2s ease-in-out;
+        }
+
+        .hover-shadow-lg:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 25px -15px rgba(0, 0, 0, 0.25);
+        }
+    </style>
+    <div class="container py-5">
+        <h1 class="mb-5 text-center">Tous les Événements</h1>
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for event in events %}
+                <div class="col">
+                    <div class="card h-100 shadow-sm border-0 rounded-lg transition hover-shadow-lg">
+                        <img src="data:image/jpeg;base64,{{ event.flyer_image }}"
+                             class="card-img-top" alt="{{ event.title }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ event.title }}</h5>
+                            <p class="card-text">{{ event.description }}</p>
+                        </div>
+                        <div class="card-footer">
+                            <p class="card-text">
+                                <small class="text-muted">Créé
+                                    par {{ event.creator_name }}</small>
+                            </p>
+                            <a href="/event/{{ event.id }}"
+                               class="btn btn-primary">S'inscrire</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

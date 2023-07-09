@@ -92,6 +92,17 @@ def about():
     return render_template("about.html")
 
 
+@app.route('/events')
+def events():
+    events = get_db().get_all_events_by_all_users()
+    # Convert the BLOB image to a base64 string for each event
+    for event in events:
+        if event['flyer_image']:
+            event['flyer_image'] = base64.b64encode(
+                event['flyer_image']).decode('utf-8')
+    return render_template('events.html', events=events)
+
+
 @app.route("/create_event", methods=["GET", "POST"])
 @authentication_required
 @organisation_required

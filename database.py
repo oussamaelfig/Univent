@@ -210,3 +210,22 @@ class Database:
         cursor.execute("DELETE FROM Events WHERE event_id = ?", (event_id,))
 
         connect.commit()
+
+    def get_all_events_by_all_users(self):
+        conn = self.get_connexion()
+        cursor = conn.cursor()
+        cursor.execute('''
+            SELECT Events.*, users.nom AS creator_name 
+            FROM Events 
+            LEFT JOIN users ON Events.creator_id = users.identifiant
+        ''')
+        events_info = cursor.fetchall()
+
+        # Convertir chaque événement en dictionnaire
+        col_names = [column[0] for column in cursor.description]
+        events_info_dicts = [
+            {col_names[index]: value for index, value in enumerate(event_info)}
+            for
+            event_info in events_info]
+
+        return events_info_dicts
