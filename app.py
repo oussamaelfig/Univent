@@ -1,3 +1,4 @@
+import base64
 import hashlib
 import re
 import sqlite3
@@ -107,16 +108,16 @@ def create_event():
 
         flyer_image = request.files["flyer_image"]
         if flyer_image:
-            flyer_image_blob = flyer_image
+            flyer_image_blob = flyer_image.read()
 
-        # TODO: Trouver une facon pour Get le creator_id
+            # TODO: Trouver une facon pour Get le creator_id
         #  mettre en place un mécanisme pour obtenir l'identifiant de
         #  l'utilisateur actuellement connecté qui est en train de créer
         #  l'événement. Cela pourrait être fait en utilisant un système
         #  d'authentification et de session.
         creator_id = get_db().get_id_user_from_id_session(session['id'])[0]
         # utilise la class Database pour faire le traitement.
-        get_db().creer_new_evenement(
+        event_id = get_db().creer_new_evenement(
             creator_id,
             title,
             start_date_time,
@@ -129,11 +130,26 @@ def create_event():
 
         # Flash message
         flash("Votre évenement a été créé !", "success")
-        # Redirect to the user page
-        return redirect("/user_page/" + get_db().get_id_user_from_id_session(
-            session["id"])[0])
+
+        # Redirect to the new event's page
+        return redirect(url_for('event_info', event_id=event_id))
 
     return render_template("create_event.html")
+
+
+@app.route('/event_info/<int:event_id>')
+@authentication_required
+def event_info(event_id):
+    # Get the event's information from the database
+    event_info = get_db().get_event_info(event_id)
+
+    # Convert the BLOB image to a base64 string
+    if event_info['flyer_image']:
+        event_info['flyer_image'] = base64.b64encode(
+            event_info['flyer_image']).decode('utf-8')
+
+    # Render a template with the event's information
+    return render_template('event_info.html', event=event_info)
 
 
 @app.route("/user_page/<identifiant>", methods=["GET", "POST"])
@@ -160,7 +176,7 @@ def modify_event(event_id):
 
         flyer_image = request.files.get("flyer_image")
         if flyer_image:
-            flyer_image_blob = flyer_image
+            flyer_image_blob = flyer_image.read()
 
         # utilise la class Database pour faire le traitement.
         get_db().modify_event(
@@ -256,6 +272,7 @@ def connecter():
         return redirect("/user_page/" + get_db().get_id_user_from_id_session(
             session["id"])[0])
 
+
 @authentication_required
 @app.route("/logout")
 def deconnecter():
@@ -263,7 +280,6 @@ def deconnecter():
     session["id"] = None;
     session.pop("id", None)
     return redirect('/')
-    
 
 
 def valider_compte(nom, courriel):

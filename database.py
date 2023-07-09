@@ -80,7 +80,7 @@ class Database:
     def delete_session(self, id_se):
         connection = self.get_connexion()
         cursor = connection.cursor()
-        cursor.execute("delete from sessions where identifiant=?", (id_se, ))
+        cursor.execute("delete from sessions where identifiant=?", (id_se,))
         connection.commit()
 
     #### Table events #####
@@ -119,17 +119,12 @@ class Database:
             start_date_time,
             end_date_time,
             location,
-            flyer_image,
+            flyer_image_blob,
             description,
             max_registration
     ):
         connect = self.get_connexion()
         cursor = connect.cursor()
-
-        # Convertit l'image en un BLOB
-        flyer_image_blob = None
-        if flyer_image:
-            flyer_image_blob = flyer_image.read()
 
         # Inserer l'evenement dans la database
         cursor.execute(
@@ -148,6 +143,26 @@ class Database:
             ),
         )
         connect.commit()
+
+        # Retourne l'ID du nouvel événement créé
+        return cursor.lastrowid
+
+    def get_event_info(self, event_id):
+        conn = self.get_connexion()
+        cursor = conn.cursor()
+        cursor.execute('''
+            SELECT Events.*, users.nom AS creator_name 
+            FROM Events 
+            LEFT JOIN users ON Events.creator_id = users.identifiant 
+            WHERE event_id = ?''', (event_id,))
+        event_info = cursor.fetchone()
+
+        # Convertir en dictionnaire
+        col_names = [column[0] for column in cursor.description]
+        event_info_dict = {col_names[index]: value for index, value in
+                           enumerate(event_info)}
+
+        return event_info_dict
 
     def modify_event(
             self,
