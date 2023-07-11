@@ -8,25 +8,92 @@
     <div class="container py-5">
         <div class="row">
             <div class="col-lg-8 mx-auto">
-                <div class="text-center mb-5">
-                    <h1 class="display-4 fw-bolder">{{ event.title }}</h1>
+                <!-- Event Title -->
+                <h1 class="display-4 fw-bolder text-center mb-5">{{ event.title }}</h1>
+
+                <!-- Event Image -->
+                <div class="card mb-4 shadow">
+                    <img class="img-fluid rounded-top"
+                         src="data:image/jpeg;base64,{{ event.flyer_image }}"
+                         alt="Event Image"/>
                 </div>
-                <div class="mb-5 text-center">
-                    <img class="img-fluid rounded mb-4"
-                         src="data:image/jpeg;base64,{{ event.flyer_image }}"/>
+
+                <!-- Event Details -->
+                <div class="card mb-4 shadow">
+                    <div class="card-body">
+                        <h2 class="fw-bolder mb-3">Description</h2>
+                        <p class="lead">{{ event.description }}</p>
+                        <hr>
+                        <h2 class="fw-bolder mb-3">Date de début</h2>
+                        <p class="lead">{{ event.start_date_time }}</p>
+                        <hr>
+                        <h2 class="fw-bolder mb-3">Date de fin</h2>
+                        <p class="lead">{{ event.end_date_time }}</p>
+                        <hr>
+                        <h2 class="fw-bolder mb-3">Lieu</h2>
+                        <p class="lead">{{ event.location }}</p>
+                        <hr>
+                        <h2 class="fw-bolder mb-3">Nombre maximum de
+                            participants</h2>
+                        <p class="lead">{{ event.max_registration }}</p>
+                        <hr>
+                        <h2 class="fw-bolder mb-3">Créé par</h2>
+                        <p class="lead">{{ event.creator_name }}</p>
+                    </div>
                 </div>
-                <h2 class="fw-bolder mb-3">Description</h2>
-                <p class="lead">{{ event.description }}</p>
-                <h2 class="fw-bolder mb-3">Date de début</h2>
-                <p class="lead">{{ event.start_date_time }}</p>
-                <h2 class="fw-bolder mb-3">Date de fin</h2>
-                <p class="lead">{{ event.end_date_time }}</p>
-                <h2 class="fw-bolder mb-3">Lieu</h2>
-                <p class="lead">{{ event.location }}</p>
-                <h2 class="fw-bolder mb-3">Nombre maximum de participants</h2>
-                <p class="lead">{{ event.max_registration }}</p>
-                <h2 class="fw-bolder mb-3">Créé par</h2>
-                <p class="lead">{{ event.creator_name }}</p>
+
+                <!-- Map Container -->
+                <div id="map" style="height: 400px;"></div>
+
+                <!-- OpenLayers Maps SDK -->
+                <script src="https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v6.5.0/build/ol.js"></script>
+
+                <!-- Map Creation Script -->
+                <script>
+                    // Obtenir les coordonnées du lieu
+                    fetch('https://api.tomtom.com/search/2/geocode/{{ event.location }}.json?key=Gludg0lyupZ5ypfc2UzuCROSlUTqhyjm')
+                        .then(response => response.json())
+                        .then(data => {
+                            // Vérifier si des résultats ont été trouvés
+                            if (data.results && data.results.length > 0) {
+                                const lat = data.results[0].position.lat;
+                                const lon = data.results[0].position.lon;
+
+                                // Créer la carte
+                                var map = new ol.Map({
+                                    target: 'map',
+                                    layers: [
+                                        new ol.layer.Tile({
+                                            source: new ol.source.OSM()
+                                        })
+                                    ],
+                                    view: new ol.View({
+                                        center: ol.proj.fromLonLat([lon, lat]),
+                                        zoom: 15
+                                    })
+                                });
+
+                                // Ajouter un marqueur à la position
+                                var marker = new ol.Feature({
+                                    geometry: new ol.geom.Point(
+                                        ol.proj.fromLonLat([lon, lat])
+                                    ),
+                                });
+
+                                var vectorSource = new ol.source.Vector({
+                                    features: [marker]
+                                });
+
+                                var markerVectorLayer = new ol.layer.Vector({
+                                    source: vectorSource,
+                                });
+
+                                map.addLayer(markerVectorLayer);
+                            } else {
+                                console.log('Aucun résultat trouvé pour ce lieu');
+                            }
+                        });
+                </script>
             </div>
         </div>
     </div>
