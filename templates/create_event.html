@@ -78,12 +78,11 @@
             </div>
         </div>
     </section>
-
     <script>
         document.getElementById("location").addEventListener('input', function () {
             let input = this.value;
             if (input.length > 3) {
-                fetch('https://api.opencagedata.com/geocode/v1/json?q=' + input + '&key=83076d8a6a844157b1058d9f66340df5')
+                fetch('https://api.tomtom.com/search/2/search/' + input + '.json?key=Gludg0lyupZ5ypfc2UzuCROSlUTqhyjm')
                     .then(response => response.json())
                     .then(data => {
                         // Clear previous suggestions
@@ -92,9 +91,9 @@
                         // Add new suggestions
                         data.results.forEach(function (result) {
                             let div = document.createElement('div');
-                            div.textContent = result.formatted;
+                            div.textContent = result.address.freeformAddress;
                             div.addEventListener('click', function () {
-                                document.getElementById('location').value = result.formatted;
+                                document.getElementById('location').value = result.address.freeformAddress;
                                 document.getElementById('suggestions').innerHTML = '';
                             });
                             document.getElementById('suggestions').appendChild(div);

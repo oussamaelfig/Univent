@@ -221,11 +221,24 @@ class Database:
         ''')
         events_info = cursor.fetchall()
 
-        # Convertir chaque événement en dictionnaire
+        # Convert each event into a dictionary
         col_names = [column[0] for column in cursor.description]
         events_info_dicts = [
             {col_names[index]: value for index, value in enumerate(event_info)}
-            for
-            event_info in events_info]
+            for event_info in events_info
+        ]
 
         return events_info_dicts
+
+    def register_participant(self, event_id, nom, email):
+        connect = self.get_connexion()
+        cursor = connect.cursor()
+
+        cursor.execute(
+            "INSERT INTO Participants (event_id, nom, email) VALUES (?, ?, ?)",
+            (event_id, nom, email),
+        )
+
+        connect.commit()
+
+        return cursor.lastrowid

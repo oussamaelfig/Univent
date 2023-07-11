@@ -95,11 +95,13 @@ def about():
 @app.route('/events')
 def events():
     events = get_db().get_all_events_by_all_users()
-    # Convert the BLOB image to a base64 string for each event
+    # Convertir l'image BLOB en une chaîne base64 pour chaque événement
     for event in events:
         if event['flyer_image']:
             event['flyer_image'] = base64.b64encode(
                 event['flyer_image']).decode('utf-8')
+
+    print(events)
     return render_template('events.html', events=events)
 
 
@@ -339,6 +341,17 @@ def valider_mdp(mdp, mdp2):
     if mdp != mdp2:
         err.append("Les deux mots de passe ne concordent pas.")
     return err
+
+
+@app.route("/register/<int:event_id>", methods=["POST"])
+def register(event_id):
+    nom = request.form.get("nom")
+    email = request.form.get("email")
+
+    get_db().register_participant(event_id, nom, email)
+
+    # retourne une réponse HTTP 200 si l'inscription est réussie
+    return "", 200
 
 
 if __name__ == "__main__":
