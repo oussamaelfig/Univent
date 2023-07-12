@@ -289,6 +289,8 @@ def connecter():
                 get_db().creer_session(id_session, utilisateur[2])
                 session["id"] = id_session
                 return redirect("/user_page/" + utilisateur[2])
+            else:
+                return render_template("login.html", erreurs=err)
         else:
             return redirect(
                 "/user_page/" + get_db().get_id_user_from_id_session(
