@@ -38,6 +38,16 @@ def organisation_required(f):
 
     return decorated
 
+def etudiant_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if not is_etudiant(session):
+            return send_unauthorized()
+        return f(*args, **kwargs)
+
+
+def is_etudiant(sessionId):
+    return get_db().get_type_compte_from_session_id(session["id"])[0] == 1
 
 def is_organisation(sessionId):
     return get_db().get_type_compte_from_session_id(session["id"])[0] == 0
