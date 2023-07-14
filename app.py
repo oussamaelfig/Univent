@@ -200,6 +200,7 @@ def user_page(identifiant):
 
 @app.route("/modify_event/<int:event_id>", methods=["POST"])
 @authentication_required
+@organisation_required
 def modify_event(event_id):
     if request.method == "POST":
         title = request.form.get("title")
@@ -233,6 +234,7 @@ def modify_event(event_id):
 
 @app.route("/delete_event/<int:event_id>", methods=["POST"])
 @authentication_required
+@organisation_required
 def delete_event(event_id):
     event = get_db().get_event_by_id(event_id)
     get_db().delete_event(event_id)
@@ -356,6 +358,7 @@ def valider_mdp(mdp, mdp2):
 
 
 @app.route("/register/<int:event_id>", methods=["POST"])
+@etudiant_required
 def register(event_id):
     nom = request.form.get("nom")
     email = request.form.get("email")
