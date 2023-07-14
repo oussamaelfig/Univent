@@ -354,6 +354,7 @@ def register(event_id):
     return "", 200
 
 @app.route('/search')
+@authentication_required
 def search():
     title_q = request.args.get('title', '')
     description_q = request.args.get('description', '')
