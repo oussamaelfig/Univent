@@ -356,9 +356,8 @@ def valider_mdp(mdp, mdp2):
         err.append("Les deux mots de passe ne concordent pas.")
     return err
 
-
-@app.route("/register/<int:event_id>", methods=["POST"])
 @etudiant_required
+@app.route("/register/<int:event_id>", methods=["POST"])
 def register(event_id):
     nom = request.form.get("nom")
     email = request.form.get("email")
