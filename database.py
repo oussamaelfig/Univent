@@ -269,19 +269,18 @@ class Database:
             params.append('%'+organizer_q+'%')
 
         if start:
-            query += " AND Events.start_date_time >= ?"
-            params.append(start)
+            query += " AND DATE(Events.start_date_time) >= DATE(?)"
+            params.append(start.split('T')[0])
 
         if end:
-            query += " AND Events.end_date_time <= ?"
-            params.append(end)
+            query += " AND DATE(Events.end_date_time) <= DATE(?)"
+            params.append(end.split('T')[0])
 
         if max_participants:
             query += " AND Events.max_registration <= ?"
             params.append(max_participants)
 
         cursor.execute(query, params)
-
 
         col_names = [column[0] for column in cursor.description]
         events_info_dicts = [
