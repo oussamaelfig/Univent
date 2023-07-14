@@ -248,7 +248,57 @@ class Database:
 
         return cursor.lastrowid
     
+
     def get_all_particiapnt_by_courriel(self, courriel):
         cursor = self.get_connexion().cursor()
         cursor.execute("select Events.event_id, title from Events inner join Participants on Participants.event_id=Events.event_id where email=?", (courriel,))
         return cursor.fetchall()
+
+
+    def search_events(self, title_q=None, description_q=None, organizer_q=None, start=None, end=None, max_participants=None):
+        conn = self.get_connexion()
+        cursor = conn.cursor()
+
+        query = """
+            SELECT Events.*, users.nom AS creator_name
+            FROM Events
+            LEFT JOIN users ON Events.creator_id = users.identifiant
+            WHERE 1
+            """
+
+        params = []
+
+        if title_q:
+            query += " AND LOWER(Events.title) LIKE LOWER(?)"
+            params.append('%'+title_q+'%')
+
+        if description_q:
+            query += " AND LOWER(Events.description) LIKE LOWER(?)"
+            params.append('%'+description_q+'%')
+
+        if organizer_q:
+            query +=  " AND LOWER(users.nom) LIKE LOWER(?)"
+            params.append('%'+organizer_q+'%')
+
+        if start:
+            query += " AND DATE(Events.start_date_time) >= DATE(?)"
+            params.append(start.split('T')[0])
+
+        if end:
+            query += " AND DATE(Events.end_date_time) <= DATE(?)"
+            params.append(end.split('T')[0])
+
+        if max_participants:
+            query += " AND Events.max_registration <= ?"
+            params.append(max_participants)
+
+        cursor.execute(query, params)
+
+        col_names = [column[0] for column in cursor.description]
+        events_info_dicts = [
+            {col_names[index]: value for index, value in enumerate(event_info)}
+            for event_info in cursor.fetchall()
+        ]
+
+        return events_info_dicts
+
