@@ -82,6 +82,11 @@ class Database:
         cursor = connection.cursor()
         cursor.execute("delete from sessions where identifiant=?", (id_se,))
         connection.commit()
+        
+    def get_courriel_from_id_session(self, id_session):
+        cursor = self.get_connexion().cursor()
+        cursor.execute("select courriel from users inner join sessions on users.identifiant = userId where sessions.identifiant=?", (id_session,))
+        return cursor.fetchone()[0]
 
     #### Table events #####
     # def get_all_events(self):
@@ -242,3 +247,8 @@ class Database:
         connect.commit()
 
         return cursor.lastrowid
+    
+    def get_all_particiapnt_by_courriel(self, courriel):
+        cursor = self.get_connexion().cursor()
+        cursor.execute("select Events.event_id, title from Events inner join Participants on Participants.event_id=Events.event_id where email=?", (courriel,))
+        return cursor.fetchall()
