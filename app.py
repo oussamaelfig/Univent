@@ -7,7 +7,7 @@ from functools import wraps
 
 from database import Database
 from flask import (Flask, Response, flash, g, redirect, render_template,
-                   request, session, url_for)
+                   request, session, url_for, jsonify)
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
@@ -353,6 +353,22 @@ def register(event_id):
     # retourne une réponse HTTP 200 si l'inscription est réussie
     return "", 200
 
+@app.route('/search')
+def search():
+    title_q = request.args.get('title', '')
+    description_q = request.args.get('description', '')
+    organizer_q = request.args.get('organizer', '')
+    start = request.args.get('start', '') or None
+    end = request.args.get('end', '') or None
+    max_participants = request.args.get('max', '') or None
+
+    events = get_db().search_events_by_title_or_description(title_q, description_q, organizer_q, start, end, max_participants)
+
+    for event in events:
+        if event['flyer_image']:
+            event['flyer_image'] = base64.b64encode(event['flyer_image']).decode('utf-8')
+
+    return jsonify(events)
 
 if __name__ == "__main__":
     app.run()
