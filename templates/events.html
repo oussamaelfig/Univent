@@ -11,21 +11,16 @@ content %}
   }
 </style>
 <div class="container py-5">
-  <form id="search-form">
+  <form id="search-form" action="/search" method="POST">
     <div class="input-group mb-3">
       <input
         type="text"
         class="form-control"
         id="search-title"
+        name="title"
         placeholder="Recherche par titre"
         aria-label="Recherche par titre"
         aria-describedby="button-addon1" />
-      <button
-        class="btn btn-outline-secondary"
-        type="submit"
-        id="button-addon1">
-        Rechercher
-      </button>
     </div>
 
     <div class="input-group mb-3">
@@ -33,15 +28,10 @@ content %}
         type="text"
         class="form-control"
         id="search-description"
+        name="description"
         placeholder="Recherche par description"
         aria-label="Recherche par description"
         aria-describedby="button-addon2" />
-      <button
-        class="btn btn-outline-secondary"
-        type="submit"
-        id="button-addon2">
-        Rechercher
-      </button>
     </div>
 
     <div class="input-group mb-3">
@@ -49,34 +39,25 @@ content %}
         type="text"
         class="form-control"
         id="search-organizer"
+        name="organizer"
         placeholder="Recherche par organisateur"
         aria-label="Recherche par organisateur"
         aria-describedby="button-addon3" />
-      <button
-        class="btn btn-outline-secondary"
-        type="submit"
-        id="button-addon3">
-        Rechercher
-      </button>
     </div>
+
+    <h3>Filtres</h3>
+    <label for="startDate">Date de commencement:</label>
+    <input type="date" id="startDate" name="start" />
+
+    <label for="endDate">Date de fin:</label>
+    <input type="date" id="endDate" name="end" />
+
+    <label for="maxParticipants">Maximum Participants:</label>
+    <input type="number" id="maxParticipants" name="max" min="0" />
+
+    <button type="submit" id="filterButton">Rechercher</button>
+    <button type="button" id="clearFilter">Réinitialiser</button>
   </form>
-  <div class="sidebar">
-    <form id="filterForm">
-      <h3>Filtres</h3>
-
-      <label for="startDate">Date de commencement:</label>
-      <input type="date" id="startDate" />
-
-      <label for="endDate">Date de fin:</label>
-      <input type="date" id="endDate" />
-
-      <label for="maxParticipants">Maximum Participants:</label>
-      <input type="number" id="maxParticipants" min="0" />
-
-      <button type="submit" id="filterButton">Appliquer les filtres</button>
-      <button type="button" id="clearFilter">Réinitialiser</button>
-    </form>
-  </div>
   <h1 class="mb-5 text-center">Tous les Événements</h1>
   <div class="row row-cols-1 row-cols-md-3 g-4" id="eventsDiv">
     {% if events|length > 0 %} {% for event in events %}
@@ -189,73 +170,21 @@ content %}
     });
   });
 
-
-  function renderEvents(data) {
-    let eventHTML = "";
-
-    if (data.length === 0) {
-      eventHTML =
-        '<h2 class="text-center">Aucun événement n\'a été trouvé...</h2>';
-    } else {
-      data.forEach((event) => {
-        eventHTML += `<div class="col">
-        <div class="card h-100 shadow-sm border-0 rounded-lg transition hover-shadow-lg">
-            <img src="data:image/jpeg;base64,${event.flyer_image}" class="card-img-top" alt="${event.title}" />
-            <div class="card-body">
-                <h5 class="card-title"><b>${event.title}</b></h5>
-                <p class="card-text">${event.description}</p>
-            </div>
-            <div class="card-footer">
-                <p class="card-text"><small class="text-muted">Créé par ${event.creator_name}</small></p>
-                <button type="button" class="btn btn-primary register-btn" data-event-id="${event.event_id}">S'inscrire</button>
-            </div>
-        </div>
-      </div>`;
-      });
-    }
-
-    document.getElementById("eventsDiv").innerHTML = eventHTML;
-  }
-
-
-  function getSearchFields() {
-    return {
-      title: document.getElementById("search-title").value,
-      description: document.getElementById("search-description").value,
-      organizer: document.getElementById("search-organizer").value,
-      start: document.getElementById("startDate").value,
-      end: document.getElementById("endDate").value,
-      max: document.getElementById("maxParticipants").value,
-    };
-  }
-
-
-  document
-    .getElementById("search-form")
-    .addEventListener("submit", function (e) {
-      e.preventDefault();
-      $.get("/search", getSearchFields(), renderEvents);
-    });
-
-
-  document
-    .getElementById("filterButton")
-    .addEventListener("click", function (e) {
-      e.preventDefault();
-      $.get("/search", getSearchFields(), renderEvents);
-    });
-
-
   document.getElementById("clearFilter").addEventListener("click", function () {
-    [
+    var inputIds = [
       "startDate",
       "endDate",
       "maxParticipants",
       "search-title",
       "search-description",
       "search-organizer",
-    ].forEach((id) => (document.getElementById(id).value = ""));
-    $.get("/search", renderEvents);
+    ];
+
+    for (let i = 0; i < inputIds.length; i++) {
+      document.getElementById(inputIds[i]).value = "";
+    }
+
+    window.location.href = "/events";
   });
 </script>
 {% endblock %}

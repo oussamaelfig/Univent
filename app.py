@@ -353,23 +353,29 @@ def register(event_id):
     # retourne une réponse HTTP 200 si l'inscription est réussie
     return "", 200
 
-@app.route('/search')
+@app.route('/search', methods=['GET', 'POST'])
 @authentication_required
 def search():
-    title_q = request.args.get('title', '')
-    description_q = request.args.get('description', '')
-    organizer_q = request.args.get('organizer', '')
-    start = request.args.get('start', '') or None
-    end = request.args.get('end', '') or None
-    max_participants = request.args.get('max', '') or None
+    if request.method == 'POST':
+        title_q = request.form.get('title', '')
+        description_q = request.form.get('description', '')
+        organizer_q = request.form.get('organizer', '')
+        start = request.form.get('start', '') or None
+        end = request.form.get('end', '') or None
+        max_participants = request.form.get('max', '') or None
 
-    events = get_db().search_events(title_q, description_q, organizer_q, start, end, max_participants)
+        events = get_db().search_events(title_q, description_q, organizer_q, start, end, max_participants)
 
-    for event in events:
-        if event['flyer_image']:
-            event['flyer_image'] = base64.b64encode(event['flyer_image']).decode('utf-8')
+        for event in events:
+            if event['flyer_image']:
+                event['flyer_image'] = base64.b64encode(event['flyer_image']).decode('utf-8')
 
-    return jsonify(events)
+        return render_template('events.html', events=events)
+
+
+    all_events = get_db().get_all_events()
+
+    return render_template('events.html', events=all_events)
 
 if __name__ == "__main__":
     app.run()
