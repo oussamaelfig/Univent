@@ -38,6 +38,16 @@ def organisation_required(f):
 
     return decorated
 
+def etudiant_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if not is_etudiant(session):
+            return send_unauthorized()
+        return f(*args, **kwargs)
+
+
+def is_etudiant(sessionId):
+    return get_db().get_type_compte_from_session_id(session["id"])[0] == 1
 
 def is_organisation(sessionId):
     return get_db().get_type_compte_from_session_id(session["id"])[0] == 0
@@ -184,12 +194,16 @@ def event_info(event_id):
 def user_page(identifiant):
     user_info = get_db().get_user_info_from_iden(identifiant)
     events = get_db().get_all_events(identifiant)
+    if(get_db().get_type_compte_from_session_id(session["id"]) != 0):
+        events = get_db().get_all_particiapnt_by_courriel(get_db().get_courriel_from_id_session(session["id"]))
+        return render_template("user_page.html", events=events,
+                           user_info=user_info, est_org=False)
     return render_template("user_page.html", events=events,
-                           user_info=user_info)
-
+                           user_info=user_info, est_org=True)
 
 @app.route("/modify_event/<int:event_id>", methods=["POST"])
 @authentication_required
+@organisation_required
 def modify_event(event_id):
     if request.method == "POST":
         title = request.form.get("title")
@@ -223,6 +237,7 @@ def modify_event(event_id):
 
 @app.route("/delete_event/<int:event_id>", methods=["POST"])
 @authentication_required
+@organisation_required
 def delete_event(event_id):
     event = get_db().get_event_by_id(event_id)
     get_db().delete_event(event_id)
@@ -289,6 +304,8 @@ def connecter():
                 get_db().creer_session(id_session, utilisateur[2])
                 session["id"] = id_session
                 return redirect("/user_page/" + utilisateur[2])
+            else:
+                return render_template("login.html", erreurs=err)
         else:
             return redirect(
                 "/user_page/" + get_db().get_id_user_from_id_session(
@@ -342,7 +359,7 @@ def valider_mdp(mdp, mdp2):
         err.append("Les deux mots de passe ne concordent pas.")
     return err
 
-
+@etudiant_required
 @app.route("/register/<int:event_id>", methods=["POST"])
 def register(event_id):
     nom = request.form.get("nom")

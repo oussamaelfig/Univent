@@ -29,7 +29,11 @@
                  height="100">
             <div>
                 <h4 class="fw-bold mb-0">{{ user_info[0] }}</h4>
+                {% if est_org %}
                 <span class="text-muted">Organisation</span>
+                {% else %}
+                <span class="text-muted">Étudiant</span>
+                {% endif %}
                 <h6 class="mt-2 fw-normal">{{ user_info[2] }}</h6>
             </div>
             <div class="ms-auto">
@@ -37,15 +41,28 @@
                     déconnecter
                 </button>
             </div>
+         {% if est_org %}
+         <div>
+            <button class="btn btn-success" onclick="creerEvent()">Créer un évènement</button>
+         </div>
+         {% endif %}
         </div>
 
         <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
             <li class="nav-item" role="presentation">
+                {% if est_org %}
                 <button class="nav-link active" id="user-events-tab"
                         data-bs-toggle="pill" data-bs-target="#user-events"
                         type="button" role="tab" aria-controls="user-events"
                         aria-selected="true">Événements Créés
                 </button>
+                {% else %}
+                <button class="nav-link active" id="user-events-tab"
+                        data-bs-toggle="pill" data-bs-target="#user-events"
+                        type="button" role="tab" aria-controls="user-events"
+                        aria-selected="true">Événements inscrits
+                </button>
+                {% endif %}
             </li>
             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="user-info-tab"
@@ -100,6 +117,7 @@
                                     <td>{{ event[8] }}</td>
                                     <!-- event[8] represents the max_registration -->
                                     <td class="d-flex align-items-center">
+                                        {% if est_org %}
                                         <button type="button"
                                                 class="btn btn-primary me-2"
                                                 data-bs-toggle="modal"
@@ -112,9 +130,12 @@
                                                 data-bs-target="#deleteEvent{{ event[0] }}">
                                             Supprimer
                                         </button>
+                                        {% endif %}
                                     </td>
                                 </tr>
                                 <!-- Delete Event Modal -->
+                                {% if est_org %}
+
                                 <div class="modal fade"
                                      id="deleteEvent{{ event[0] }}"
                                      tabindex="-1"
@@ -154,9 +175,13 @@
                                         </div>
                                     </div>
                                 </div>
+                                {% endif %}
+
                             {% endfor %}
                             </tbody>
                         </table>
+                        {% if est_org %}
+
                         {% for event in events %}
                             <!-- Modal -->
                             <div class="modal fade"
@@ -271,6 +296,7 @@
                             </div>
                         {% endfor %}
                     </div>
+                    {% endif %}
                     </div>
                 {% else %}
                     <div class="container pt-5">
@@ -283,6 +309,10 @@
     <script>
         function deconnecter() {
             window.location.replace("/logout")
+        }
+
+        function creerEvent(){
+            window.location.replace("/create_event")
         }
     </script>
 {% endblock %}
