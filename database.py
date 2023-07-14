@@ -242,3 +242,51 @@ class Database:
         connect.commit()
 
         return cursor.lastrowid
+    
+    def search_events(self, title_q=None, description_q=None, organizer_q=None, start=None, end=None, max_participants=None):
+        conn = self.get_connexion()
+        cursor = conn.cursor()
+
+        query = """
+            SELECT Events.*, users.nom AS creator_name
+            FROM Events
+            LEFT JOIN users ON Events.creator_id = users.identifiant
+            WHERE 1
+            """
+
+        params = []
+
+        if title_q:
+            query += " AND LOWER(Events.title) LIKE LOWER(?)"
+            params.append('%'+title_q+'%')
+
+        if description_q:
+            query += " AND LOWER(Events.description) LIKE LOWER(?)"
+            params.append('%'+description_q+'%')
+
+        if organizer_q:
+            query +=  " AND LOWER(users.nom) LIKE LOWER(?)"
+            params.append('%'+organizer_q+'%')
+
+        if start:
+            query += " AND Events.start_date_time >= ?"
+            params.append(start)
+
+        if end:
+            query += " AND Events.end_date_time <= ?"
+            params.append(end)
+
+        if max_participants:
+            query += " AND Events.max_registration <= ?"
+            params.append(max_participants)
+
+        cursor.execute(query, params)
+
+
+        col_names = [column[0] for column in cursor.description]
+        events_info_dicts = [
+            {col_names[index]: value for index, value in enumerate(event_info)}
+            for event_info in cursor.fetchall()
+        ]
+
+        return events_info_dicts

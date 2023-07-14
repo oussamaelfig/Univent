@@ -362,7 +362,7 @@ def search():
     end = request.args.get('end', '') or None
     max_participants = request.args.get('max', '') or None
 
-    events = get_db().search_events_by_title_or_description(title_q, description_q, organizer_q, start, end, max_participants)
+    events = get_db().search_events(title_q, description_q, organizer_q, start, end, max_participants)
 
     for event in events:
         if event['flyer_image']:
