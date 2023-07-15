@@ -93,10 +93,12 @@
                                 <th scope="col">Date et heure de début</th>
                                 <th scope="col">Date et heure de fin</th>
                                 <th scope="col">Lieu</th>
+                                {% if est_org %}
                                 <th scope="col">Description</th>
                                 <th scope="col">Nombre maximum d'inscriptions
                                 </th>
                                 <th scope="col">Actions</th>
+                                {% endif %}
                             </tr>
                             </thead>
                             <tbody>
@@ -138,7 +140,6 @@
                                     <td>{{ event[3] }}</td>
                                     <td>{{ event[4] }}</td>
                                     <td>{{ event[2] }}</td>
-                                    <td>{{ event[5] }}</td>
                                     {% endif %}
                                 </tr>
                                 <!-- Delete Event Modal -->
