@@ -251,7 +251,7 @@ class Database:
 
     def get_all_particiapnt_by_courriel(self, courriel):
         cursor = self.get_connexion().cursor()
-        cursor.execute("select Events.event_id, title from Events inner join Participants on Participants.event_id=Events.event_id where email=?", (courriel,))
+        cursor.execute("select Events.event_id, title, location, start_date_time, end_date_time, description from Events inner join Participants on Participants.event_id=Events.event_id where email=?", (courriel,))
         return cursor.fetchall()
 
 

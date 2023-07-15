@@ -176,7 +176,7 @@ def create_event():
 
 @app.route('/event_info/<int:event_id>')
 @authentication_required
-def event_info(event_id):
+def event_info(event_id, est_etu=False):
     # Get the event's information from the database
     event_info = get_db().get_event_info(event_id)
 
@@ -186,7 +186,7 @@ def event_info(event_id):
             event_info['flyer_image']).decode('utf-8')
 
     # Render a template with the event's information
-    return render_template('event_info.html', event=event_info)
+    return render_template('event_info.html', event=event_info, est_etu=est_etu)
 
 
 @app.route("/user_page/<identifiant>", methods=["GET", "POST"])

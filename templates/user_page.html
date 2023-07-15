@@ -102,6 +102,7 @@
                             <tbody>
                             {% for event in events %}
                                 <tr>
+                                    {% if est_org %}
                                     <td>
                                         <a href="{{ url_for('event_info', event_id=event[0]) }}">{{ event[2] }}</a>
                                     </td>
@@ -117,7 +118,6 @@
                                     <td>{{ event[8] }}</td>
                                     <!-- event[8] represents the max_registration -->
                                     <td class="d-flex align-items-center">
-                                        {% if est_org %}
                                         <button type="button"
                                                 class="btn btn-primary me-2"
                                                 data-bs-toggle="modal"
@@ -130,8 +130,16 @@
                                                 data-bs-target="#deleteEvent{{ event[0] }}">
                                             Supprimer
                                         </button>
-                                        {% endif %}
                                     </td>
+                                    {% else %}
+                                    <td>
+                                        <a href="{{ url_for('event_info', event_id=event[0], est_etu=True) }}">{{ event[1] }}</a>
+                                    </td>
+                                    <td>{{ event[3] }}</td>
+                                    <td>{{ event[4] }}</td>
+                                    <td>{{ event[2] }}</td>
+                                    <td>{{ event[5] }}</td>
+                                    {% endif %}
                                 </tr>
                                 <!-- Delete Event Modal -->
                                 {% if est_org %}
