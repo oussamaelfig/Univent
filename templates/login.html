@@ -24,7 +24,7 @@
                                     <li class="text-danger fw-light">{{err}}</li>
                             {% endfor %}
                         </ul> 
-                        <form method="POST" action="/login">
+                        <form id="connecter" method="POST" action="/login">
                             <div class="mb-3">
                                 <label for="title" class="form-label">Courriel *:</label>
                                 <input type="email" class="form-control" id="courriel" name="courriel" required>
@@ -34,6 +34,9 @@
                                 <label for="title" class="form-label">Mot de passe *:</label>
                                 <input type="password" class="form-control" id="mdp" name="mdp" required>
                             <div class="p-2">
+                                <p id="erreur" class="fw-light text-danger"></p>
+                            </div>
+                            <div class="p-2">
                                 <button type="submit" class="btn btn-primary">Se connecter</button>
                             </div>
                         </form>
@@ -41,5 +44,26 @@
                 </div>
             </div>
         </div>
+        <script>
+            document.getElementById("courriel").focus();
+            function validerForm(){
+                var contenu = document.getElementById("courriel").value;
+                var estPasValide = contenu.match(/([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+/) == null;
+                var mdp = document.getElementById("mdp").value;
+                if(estPasValide || contenu == "" || mdp == ""){
+                    document.getElementById("erreur").innerText = "Valeurs invalides. Réessayez";
+                    return false;
+                }else{
+                    document.getElementById("erreur").innerText = "";
+                    return true;
+                }
+            }
+
+            document.getElementById("connecter").addEventListener("submit", function(e){
+                if(!validerForm()){
+                    e.preventDefault();
+                }
+            })
+        </script>
     </section>
 {% endblock %}
