@@ -23,28 +23,39 @@
                                     <li class="text-danger fw-light">{{err}}</li>
                             {% endfor %}
                         </ul> 
-                        <form method="POST" action="/create_account">
+                        <form id="formulaire" method="POST" action="/create_account">
                             <div class="mb-3">
                                 <label for="title" class="form-label">Nom complet *:</label>
                                 <input type="text" class="form-control" id="nom" name="nom" required>
+                                <div class="p-2">
+                                    <p id="errNom" class="text-danger fw-light"></p>
+                                </div>
                             </div>
                             <div class="mb-3">
                                 <label for="title" class="form-label">Courriel *:</label>
                                 <input type="email" class="form-control" id="courriel" name="courriel" required>
+                                <div class="p-2">
+                                    <p id="errCourriel" class="text-danger fw-light"></p>
+                                </div>
                             </div>
                             <div class="mb-3">
                                 <p class="fw-light">Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère de ponctuation.</p>
                                 <label for="title" class="form-label">Mot de passe *:</label>
                                 <input type="password" class="form-control" id="mdp" name="mdp" required>
+                                <div class="p-2">
+                                    <p id="errMdp" class="text-danger fw-light"></p>
+                                </div>
                             </div>
                             <div class="mb-3">
                                 <label for="title" class="form-label">Confirmation du mot de passe *:</label>
                                 <input type="password" class="form-control" id="mdpConf" name="mdpConf" required>
+                                <div class="p-2">
+                                    <p id="errMdp2" class="fw-light text-danger"></p>
+                                </div>
                             </div>
                             <div class="mb-3">
                                 <label for="title" class="form-label">Type de compte *:</label>
                                 <select name="type" id="type" class="form-select">
-                                    <!--Est actuellement le seul type de compte qui peut être chosi-->
                                     <option selected value="1">Étudiant</option>
                                     <option value="0">Organisation</option>
                                 </select>
@@ -58,5 +69,85 @@
                 </div>
             </div>
         </div>
+        <script>
+            document.getElementById("nom").focus();
+
+            function validerCourriel(contenu){
+                return contenu.match(/([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+/) == null;
+            }
+
+            function validerMdp(contenu){
+                return (contenu == contenu.toLowerCase() || contenu == String(contenu).toUpperCase() || !(/[0-9]/.test(contenu)) || !(/[!?,.¡;¿]/.test(contenu)));
+            }
+
+            function validerNom(){
+                var e = document.getElementById("nom").value;
+                if(e == ""){
+                    document.getElementById("errNom").innerText = "Le nom entré est requis";
+                    document.getElementById("errNom").focus();
+                    return false;
+                }else{
+                    document.getElementById("errNom").innerText= "";     
+                    return true;           
+                }
+            }
+
+            function validerCourrielForm(){
+                var e = document.getElementById("courriel").value;
+                if(e == "" || validerCourriel(e)){
+                    document.getElementById("errCourriel").innerText = "Le courriel est requis/invalide";
+                    document.getElementById("courriel").focus();
+                    return false;
+                }else{
+                    document.getElementById("errCourriel").innerText = "";
+                    return true;
+                }
+            }
+
+            function validerMdpForm(){
+                var e = document.getElementById("mdp").value;
+                if(e == "" || validerMdp(e) || e.length < 8){
+                    document.getElementById("errMdp").innerText = "Le mot de passe entré est requis/invalide";
+                    document.getElementById("mdp").focus();
+                    return false;
+                }else{
+                    document.getElementById("errMdp").innerText = "";
+                    return true;
+                }
+            }
+
+            function validerConfMdp(){
+                var e = document.getElementById("mdpConf").value;
+                var champsMDP = document.getElementById("mdp").value;
+                if(champsMDP != e || e == ""){
+                    document.getElementById("errMdp2").innerText = "Les deux mots de passe ne correspondent pas.";
+                    document.getElementById("mdpConf").focus();
+                    return false;
+                }else{
+                    document.getElementById("errMdp2").innerText = "";
+                    return true;
+                }
+            }
+
+            document.getElementById("nom").addEventListener("change", function(){
+                validerNom();
+            });
+            document.getElementById("courriel").addEventListener("change", function(){
+                validerCourrielForm();
+            });
+            document.getElementById("mdp").addEventListener("change", function(){
+                validerMdpForm();
+            });
+            document.getElementById("mdpConf").addEventListener("change", function(e){
+                validerConfMdp();
+            });
+
+            document.getElementById("formulaire").addEventListener("submit", function(e){
+                if(!(validerNom() && validerCourrielForm() && validerMdpForm() && validerConfMdp())){
+                    e.preventDefault();
+                }
+            });
+            
+        </script>
     </section>
 {% endblock %}

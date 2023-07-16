@@ -268,6 +268,8 @@ def creer_compte():
         err2 = valider_mdp(mdp, mdp_conf)
         for e in err2:
             err.append(e)
+        if(type_compte != 0 or type_compte != 1):
+            err.append("Le type de compte est invalide.")
         if len(err) != 0:
             return render_template("create_account.html", erreurs=err)
         identifiant = uuid.uuid4().hex
