@@ -38,6 +38,7 @@ def organisation_required(f):
 
     return decorated
 
+
 def etudiant_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
@@ -48,6 +49,7 @@ def etudiant_required(f):
 
 def is_etudiant(sessionId):
     return get_db().get_type_compte_from_session_id(session["id"])[0] == 1
+
 
 def is_organisation(sessionId):
     return get_db().get_type_compte_from_session_id(session["id"])[0] == 0
@@ -111,7 +113,6 @@ def events():
             event['flyer_image'] = base64.b64encode(
                 event['flyer_image']).decode('utf-8')
 
-    print(events)
     return render_template('events.html', events=events)
 
 
@@ -186,7 +187,8 @@ def event_info(event_id, est_etu=False):
             event_info['flyer_image']).decode('utf-8')
 
     # Render a template with the event's information
-    return render_template('event_info.html', event=event_info, est_etu=est_etu)
+    return render_template('event_info.html', event=event_info,
+                           est_etu=est_etu)
 
 
 @app.route("/user_page/<identifiant>", methods=["GET", "POST"])
@@ -194,12 +196,14 @@ def event_info(event_id, est_etu=False):
 def user_page(identifiant):
     user_info = get_db().get_user_info_from_iden(identifiant)
     events = get_db().get_all_events(identifiant)
-    if(get_db().get_type_compte_from_session_id(session["id"]) != 0):
-        events = get_db().get_all_particiapnt_by_courriel(get_db().get_courriel_from_id_session(session["id"]))
+    if (get_db().get_type_compte_from_session_id(session["id"]) != 0):
+        events = get_db().get_all_particiapnt_by_courriel(
+            get_db().get_courriel_from_id_session(session["id"]))
         return render_template("user_page.html", events=events,
-                           user_info=user_info, est_org=False)
+                               user_info=user_info, est_org=False)
     return render_template("user_page.html", events=events,
                            user_info=user_info, est_org=True)
+
 
 @app.route("/modify_event/<int:event_id>", methods=["POST"])
 @authentication_required
@@ -268,7 +272,7 @@ def creer_compte():
         err2 = valider_mdp(mdp, mdp_conf)
         for e in err2:
             err.append(e)
-        if(type_compte != 0 or type_compte != 1):
+        if (type_compte != 0 or type_compte != 1):
             err.append("Le type de compte est invalide.")
         if len(err) != 0:
             return render_template("create_account.html", erreurs=err)
@@ -361,6 +365,7 @@ def valider_mdp(mdp, mdp2):
         err.append("Les deux mots de passe ne concordent pas.")
     return err
 
+
 @etudiant_required
 @app.route("/register/<int:event_id>", methods=["POST"])
 def register(event_id):
@@ -372,8 +377,8 @@ def register(event_id):
     # retourne une réponse HTTP 200 si l'inscription est réussie
     return "", 200
 
+
 @app.route('/search', methods=['GET', 'POST'])
-@authentication_required
 def search():
     if request.method == 'POST':
         title_q = request.form.get('title', '')
@@ -383,18 +388,20 @@ def search():
         end = request.form.get('end', '') or None
         max_participants = request.form.get('max', '') or None
 
-        events = get_db().search_events(title_q, description_q, organizer_q, start, end, max_participants)
+        events = get_db().search_events(title_q, description_q, organizer_q,
+                                        start, end, max_participants)
 
         for event in events:
             if event['flyer_image']:
-                event['flyer_image'] = base64.b64encode(event['flyer_image']).decode('utf-8')
+                event['flyer_image'] = base64.b64encode(
+                    event['flyer_image']).decode('utf-8')
 
         return render_template('events.html', events=events)
-
 
     all_events = get_db().get_all_events()
 
     return render_template('events.html', events=all_events)
+
 
 if __name__ == "__main__":
     app.run()

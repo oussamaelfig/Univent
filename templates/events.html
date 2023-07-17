@@ -1,190 +1,225 @@
-{% extends "base.html" %} {% block title %} Événements {% endblock %} {% block
-content %}
-<style>
-  .transition {
-    transition: all 0.2s ease-in-out;
-  }
+{% extends "base.html" %}
+{% block title %} Événements {% endblock %}
+{% block content %}
 
-  .hover-shadow-lg:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 25px 25px -15px rgba(0, 0, 0, 0.25);
-  }
-</style>
-<div class="container py-5">
-  <form id="search-form" action="/search" method="POST">
-    <div class="input-group mb-3">
-      <input
-        type="text"
-        class="form-control"
-        id="search-title"
-        name="title"
-        placeholder="Recherche par titre"
-        aria-label="Recherche par titre"
-        aria-describedby="button-addon1" />
-    </div>
+    <style>
+        .transition {
+            transition: all 0.2s ease-in-out;
+        }
 
-    <div class="input-group mb-3">
-      <input
-        type="text"
-        class="form-control"
-        id="search-description"
-        name="description"
-        placeholder="Recherche par description"
-        aria-label="Recherche par description"
-        aria-describedby="button-addon2" />
-    </div>
+        .hover-shadow-lg:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 25px -15px rgba(0, 0, 0, 0.25);
+        }
 
-    <div class="input-group mb-3">
-      <input
-        type="text"
-        class="form-control"
-        id="search-organizer"
-        name="organizer"
-        placeholder="Recherche par organisateur"
-        aria-label="Recherche par organisateur"
-        aria-describedby="button-addon3" />
-    </div>
+        .form-control {
+            border-radius: 30px;
+            padding-left: 20px;
+        }
 
-    <h3>Filtres</h3>
-    <label for="startDate">Date de commencement:</label>
-    <input type="date" id="startDate" name="start" />
+        .btn {
+            border-radius: 30px;
+        }
+    </style>
 
-    <label for="endDate">Date de fin:</label>
-    <input type="date" id="endDate" name="end" />
+    <div class="container py-5">
+        <h1 class="mb-5 text-center">Tous les Événements</h1>
 
-    <label for="maxParticipants">Maximum Participants:</label>
-    <input type="number" id="maxParticipants" name="max" min="0" />
-
-    <button type="submit" id="filterButton">Rechercher</button>
-    <button type="button" id="clearFilter">Réinitialiser</button>
-  </form>
-  <h1 class="mb-5 text-center">Tous les Événements</h1>
-  <div class="row row-cols-1 row-cols-md-3 g-4" id="eventsDiv">
-    {% if events|length > 0 %} {% for event in events %}
-    <div class="col">
-      <div
-        class="card h-100 shadow-sm border-0 rounded-lg transition hover-shadow-lg">
-        <img
-          src="data:image/jpeg;base64,{{ event.flyer_image }}"
-          class="card-img-top"
-          alt="{{ event.title }}" />
-        <div class="card-body">
-          <h5 class="card-title"><b>{{ event.title }}</b></h5>
-          <p class="card-text">{{ event.description }}</p>
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3>Filtres de recherche</h3>
+            </div>
+            <div class="card-body">
+                <form id="search-form" action="/search" method="POST">
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <input type="text" class="form-control"
+                                   id="search-title" name="title"
+                                   placeholder="Recherche par titre"
+                                   aria-label="Recherche par titre"
+                                   aria-describedby="button-addon1"/>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="text" class="form-control"
+                                   id="search-description" name="description"
+                                   placeholder="Recherche par description"
+                                   aria-label="Recherche par description"
+                                   aria-describedby="button-addon2"/>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="text" class="form-control"
+                                   id="search-organizer" name="organizer"
+                                   placeholder="Recherche par organisateur"
+                                   aria-label="Recherche par organisateur"
+                                   aria-describedby="button-addon3"/>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label for="startDate">Date de
+                                commencement:</label>
+                            <input type="date" class="form-control"
+                                   id="startDate" name="start"/>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="endDate">Date de fin:</label>
+                            <input type="date" class="form-control"
+                                   id="endDate" name="end"/>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="maxParticipants">Maximum
+                                Participants:</label>
+                            <input type="number" class="form-control"
+                                   id="maxParticipants" name="max" min="0"/>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 offset-md-4">
+                            <button type="submit" class="btn btn-primary w-100"
+                                    id="filterButton">Rechercher
+                            </button>
+                        </div>
+                        <div class="col-md-4">
+                            <button type="button"
+                                    class="btn btn-secondary w-100"
+                                    id="clearFilter">Réinitialiser
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
-        <div class="card-footer">
-          <p class="card-text">
-            <small class="text-muted">Créé par {{ event.creator_name }}</small>
-          </p>
-          <button
-            type="button"
-            class="btn btn-primary register-btn"
-            data-event-id="{{ event.event_id }}">
-            S'inscrire
-          </button>
+
+        <div class="row row-cols-1 row-cols-md-3 g-4" id="eventsDiv">
+            {% if events|length > 0 %}
+                {% for event in events %}
+                    <div class="col">
+                        <div class="card h-100 shadow-sm border-0 rounded-lg transition hover-shadow-lg">
+                            <img src="data:image/jpeg;base64,{{ event.flyer_image }}"
+                                 class="card-img-top" alt="{{ event.title }}"/>
+                            <div class="card-body">
+                                <h5 class="card-title"><b>{{ event.title }}</b>
+                                </h5>
+                                <p class="card-text">{{ event.description }}</p>
+                            </div>
+                            <div class="card-footer">
+                                <p class="card-text">
+                                    <small class="text-muted">Créé
+                                        par {{ event.creator_name }}</small>
+                                </p>
+                                <button type="button"
+                                        class="btn btn-primary register-btn"
+                                        data-event-id="{{ event.event_id }}">
+                                    S'inscrire
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <h2 class="text-center">Aucun événement n'existe en ce
+                    moment...</h2>
+            {% endif %}
         </div>
-      </div>
     </div>
-    {% endfor %} {% else %}
-    <h2 class="text-center">Aucun événement n'existe en ce moment...</h2>
-    {% endif %}
-  </div>
-</div>
-<div
-  class="modal fade"
-  id="registerModal"
-  tabindex="-1"
-  aria-labelledby="registerModalLabel"
-  aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="registerModalLabel">
-          Inscription à l'événement
-        </h5>
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="modal"
-          aria-label="Fermer"></button>
-      </div>
-      <div class="modal-body">
-        <form id="registerForm" method="post">
-          <div class="mb-3">
-            <label for="participantName" class="form-label">Nom</label>
-            <input
-              type="text"
-              class="form-control"
-              id="participantName"
-              name="nom"
-              required />
-          </div>
-          <div class="mb-3">
-            <label for="participantEmail" class="form-label"
-              >Adresse email</label
-            >
-            <input
-              type="email"
-              class="form-control"
-              id="participantEmail"
-              name="email"
-              required />
-          </div>
-          <button type="submit" class="btn btn-primary">S'inscrire</button>
-        </form>
-      </div>
+    <div
+            class="modal fade"
+            id="registerModal"
+            tabindex="-1"
+            aria-labelledby="registerModalLabel"
+            aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="registerModalLabel">
+                        Inscription à l'événement
+                    </h5>
+                    <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Fermer"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="registerForm" method="post">
+                        <div class="mb-3">
+                            <label for="participantName"
+                                   class="form-label">Nom</label>
+                            <input
+                                    type="text"
+                                    class="form-control"
+                                    id="participantName"
+                                    name="nom"
+                                    required/>
+                        </div>
+                        <div class="mb-3">
+                            <label for="participantEmail" class="form-label"
+                            >Adresse email</label
+                            >
+                            <input
+                                    type="email"
+                                    class="form-control"
+                                    id="participantEmail"
+                                    name="email"
+                                    required/>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            S'inscrire
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
-<script>
-  document.querySelectorAll(".register-btn").forEach((item) => {
-    item.addEventListener("click", (event) => {
-      var eventId = item.getAttribute("data-event-id");
-      document.getElementById("registerForm").action = "/register/" + eventId;
-      var myModal = new bootstrap.Modal(
-        document.getElementById("registerModal")
-      );
-      myModal.show();
-    });
-  });
+    <script>
+        document.querySelectorAll(".register-btn").forEach((item) => {
+            item.addEventListener("click", (event) => {
+                var eventId = item.getAttribute("data-event-id");
+                document.getElementById("registerForm").action = "/register/" + eventId;
+                var myModal = new bootstrap.Modal(
+                    document.getElementById("registerModal")
+                );
+                myModal.show();
+            });
+        });
 
-  $("#registerForm").on("submit", function (event) {
-    event.preventDefault(); // Empêche la soumission du formulaire par défaut
+        $("#registerForm").on("submit", function (event) {
+            event.preventDefault(); // Empêche la soumission du formulaire par défaut
 
-    var formAction = $(this).attr("action");
-    var formData = $(this).serialize(); // Collecte les données du formulaire
+            var formAction = $(this).attr("action");
+            var formData = $(this).serialize(); // Collecte les données du formulaire
 
-    $.ajax({
-      type: "POST",
-      url: formAction,
-      data: formData,
-      success: function (response) {
-        // Affiche un message de succès si l'inscription est réussie
-        alert("Vous êtes bien inscrit à l'événement !");
-        $("#registerModal").modal("hide"); // Ferme le modal
-      },
-      error: function (jqXHR, textStatus, errorThrown) {
-        // Affiche un message d'erreur si l'inscription échoue
-        alert("Une erreur est survenue lors de l'inscription : " + errorThrown);
-      },
-    });
-  });
+            $.ajax({
+                type: "POST",
+                url: formAction,
+                data: formData,
+                success: function (response) {
+                    // Affiche un message de succès si l'inscription est réussie
+                    alert("Vous êtes bien inscrit à l'événement !");
+                    $("#registerModal").modal("hide"); // Ferme le modal
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    // Affiche un message d'erreur si l'inscription échoue
+                    alert("Une erreur est survenue lors de l'inscription : " + errorThrown);
+                },
+            });
+        });
 
-  document.getElementById("clearFilter").addEventListener("click", function () {
-    var inputIds = [
-      "startDate",
-      "endDate",
-      "maxParticipants",
-      "search-title",
-      "search-description",
-      "search-organizer",
-    ];
+        document.getElementById("clearFilter").addEventListener("click", function () {
+            var inputIds = [
+                "startDate",
+                "endDate",
+                "maxParticipants",
+                "search-title",
+                "search-description",
+                "search-organizer",
+            ];
 
-    for (let i = 0; i < inputIds.length; i++) {
-      document.getElementById(inputIds[i]).value = "";
-    }
+            for (let i = 0; i < inputIds.length; i++) {
+                document.getElementById(inputIds[i]).value = "";
+            }
 
-    window.location.href = "/events";
-  });
-</script>
+            window.location.href = "/events";
+        });
+    </script>
 {% endblock %}

@@ -82,10 +82,12 @@ class Database:
         cursor = connection.cursor()
         cursor.execute("delete from sessions where identifiant=?", (id_se,))
         connection.commit()
-        
+
     def get_courriel_from_id_session(self, id_session):
         cursor = self.get_connexion().cursor()
-        cursor.execute("select courriel from users inner join sessions on users.identifiant = userId where sessions.identifiant=?", (id_session,))
+        cursor.execute(
+            "select courriel from users inner join sessions on users.identifiant = userId where sessions.identifiant=?",
+            (id_session,))
         return cursor.fetchone()[0]
 
     #### Table events #####
@@ -247,15 +249,16 @@ class Database:
         connect.commit()
 
         return cursor.lastrowid
-    
 
     def get_all_particiapnt_by_courriel(self, courriel):
         cursor = self.get_connexion().cursor()
-        cursor.execute("select Events.event_id, title, location, start_date_time, end_date_time, description from Events inner join Participants on Participants.event_id=Events.event_id where email=?", (courriel,))
+        cursor.execute(
+            "select Events.event_id, title, location, start_date_time, end_date_time, description from Events inner join Participants on Participants.event_id=Events.event_id where email=?",
+            (courriel,))
         return cursor.fetchall()
 
-
-    def search_events(self, title_q=None, description_q=None, organizer_q=None, start=None, end=None, max_participants=None):
+    def search_events(self, title_q=None, description_q=None, organizer_q=None,
+                      start=None, end=None, max_participants=None):
         conn = self.get_connexion()
         cursor = conn.cursor()
 
@@ -270,15 +273,15 @@ class Database:
 
         if title_q:
             query += " AND LOWER(Events.title) LIKE LOWER(?)"
-            params.append('%'+title_q+'%')
+            params.append('%' + title_q + '%')
 
         if description_q:
             query += " AND LOWER(Events.description) LIKE LOWER(?)"
-            params.append('%'+description_q+'%')
+            params.append('%' + description_q + '%')
 
         if organizer_q:
-            query +=  " AND LOWER(users.nom) LIKE LOWER(?)"
-            params.append('%'+organizer_q+'%')
+            query += " AND LOWER(users.nom) LIKE LOWER(?)"
+            params.append('%' + organizer_q + '%')
 
         if start:
             query += " AND DATE(Events.start_date_time) >= DATE(?)"
@@ -301,4 +304,3 @@ class Database:
         ]
 
         return events_info_dicts
-
