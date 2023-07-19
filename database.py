@@ -110,8 +110,6 @@ class Database:
     def get_all_events(self, creator_id):
         connect = self.get_connexion()
         cursor = connect.cursor()
-        print("this")
-
         # Execute SQL query to retrieve events of a specific user
         cursor.execute("SELECT * FROM Events WHERE creator_id = ?",
                        (creator_id,))

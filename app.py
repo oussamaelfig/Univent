@@ -196,7 +196,8 @@ def event_info(event_id, est_etu=False):
 def user_page(identifiant):
     user_info = get_db().get_user_info_from_iden(identifiant)
     events = get_db().get_all_events(identifiant)
-    if (get_db().get_type_compte_from_session_id(session["id"]) == '1'):
+    if (get_db().get_type_compte_from_session_id(session["id"])[0] == 1):
+        print(get_db().get_type_compte_from_session_id(session["id"]))
         events = get_db().get_all_particiapnt_by_courriel(
             get_db().get_courriel_from_id_session(session["id"]))
         return render_template("user_page.html", events=events,
