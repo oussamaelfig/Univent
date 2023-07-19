@@ -196,7 +196,7 @@ def event_info(event_id, est_etu=False):
 def user_page(identifiant):
     user_info = get_db().get_user_info_from_iden(identifiant)
     events = get_db().get_all_events(identifiant)
-    if (get_db().get_type_compte_from_session_id(session["id"]) != 0):
+    if (get_db().get_type_compte_from_session_id(session["id"]) == '1'):
         events = get_db().get_all_particiapnt_by_courriel(
             get_db().get_courriel_from_id_session(session["id"]))
         return render_template("user_page.html", events=events,
@@ -272,7 +272,7 @@ def creer_compte():
         err2 = valider_mdp(mdp, mdp_conf)
         for e in err2:
             err.append(e)
-        if (type_compte != 0 or type_compte != 1):
+        if (type_compte != '0' and type_compte != '1'):
             err.append("Le type de compte est invalide.")
         if len(err) != 0:
             return render_template("create_account.html", erreurs=err)
