@@ -1,82 +1,93 @@
 {% extends "base.html" %}
 {% block title %}
-    UNIVENT - Accueil
+UNIVENT - Accueil
 {% endblock %}
 {% block content %}
-    <link rel="shortcut icon"
-          href="{{ url_for('static', filename='favicon.ico') }}">
+<link rel="shortcut icon"
+    href="{{ url_for('static', filename='favicon.ico') }}">
 
-    <div class="container mt-4">
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="alert alert-success alert-dismissible fade show"
-                         role="alert">
-                        <strong>{{ message }}</strong>
-                        <button type="button" class="btn-close"
-                                data-bs-dismiss="alert"
-                                aria-label="Close"></button>
-                    </div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
+<div class="container mt-4">
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-success alert-dismissible fade show"
+        role="alert">
+        <strong>{{ message }}</strong>
+        <button type="button" class="btn-close"
+            data-bs-dismiss="alert"
+            aria-label="Close"></button>
     </div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+</div>
 
-    <div class="container my-5 p-4 bg-light shadow rounded">
-        <div class="d-flex align-items-center mb-4">
-            <img src="{{ url_for('static', filename='images/avatar.png') }}"
-                 class="rounded-circle me-3" alt="User Avatar" width="100"
-                 height="100">
-            <div>
-               <h4>Administration du site</h4>
-            </div>
-            <div class="ms-auto">
-                <button class="btn btn-danger" onclick="deconnecter()">Se
-                    déconnecter
-                </button>
-            </div>
+<div class="container my-5 p-4 bg-light shadow rounded">
+    <div class="d-flex align-items-center mb-4">
+        <img src="{{ url_for('static', filename='images/avatar.png') }}"
+            class="rounded-circle me-3" alt="User Avatar" width="100"
+            height="100">
+        <div>
+            <h4>Administration du site</h4>
         </div>
-        <h3>Liste des utilisateurs</h3>
-        {% for user in users %}
-        <div class="p-2">
-            <div class="row">
-                <div class="col-6">
-                    <h5>{{user[2]}}</h5>
-                </div>
-                <div class="col-3">
-                    <button class="btn btn-warning">Afficher infos</button>
-                </div>
-                <div class="col-3">
-                    <button class="btn btn-danger">Supprimer compte</button>
-                </div>
-            </div>
+        <div class="ms-auto">
+            <button class="btn btn-danger" onclick="deconnecter()">Se
+                déconnecter
+            </button>
         </div>
-        {% endfor %}
-        <h3>Liste des évènements</h3>
-        {% for event in events %}
-        <div class="p-2">
-            <div class="row">
-                <div class="col-6">
-                    <h5>{{event[2]}}</h5>
-                </div>
-                <div class="col-3">
-                    <button class="btn btn-warning">Afficher infos</button>
-                </div>
-                <div class="col-3">
-                    <button class="btn btn-danger">Supprimer Évènement</button>
-                </div>
-            </div>
-        </div>
-        {% endfor %}
     </div>
+    <h3>Liste des utilisateurs</h3>
+    {% for user in users %}
+    <div class="p-2">
+        <div class="row">
+            <div class="col-6">
+                <h5>{{user[2]}}</h5>
+            </div>
+            <div class="col-3">
+                <button class="btn btn-warning">Afficher infos</button>
+            </div>
+            <div class="col-3">
+                <button class="btn btn-danger"
+                    onclick="supprimerUser('{{user[1]}}')">Supprimer compte</button>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    <h3>Liste des évènements</h3>
+    {% for event in events %}
+    <div class="p-2">
+        <div class="row">
+            <div class="col-6">
+                <h5>{{event[2]}}</h5>
+            </div>
+            <div class="col-3">
+                <button class="btn btn-warning">Afficher infos</button>
+            </div>
+            <div class="col-3">
+                <button class="btn btn-danger"
+                    onclick="supprimerEvent('{{event[0]}}')">Supprimer Évènement</button>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
 
-    <script>
-        function deconnecter() {
-            window.location.replace("/logout")
+<script>
+
+        function deconnecter(){
+            window.location.replace("/logout");
         }
 
-        function creerEvent(){
-            window.location.replace("/create_event")
+        function supprimerEvent(identifiant){
+            if(confirm("Voulez-vous vraiment supprimer l'évènement?")){
+                window.location.replace("/supprimer_event/" + identifiant);
+            }
+        }
+
+        function supprimerUser(identifiant){
+            if(confirm("Voulez-vous vraiment supprimer l'utilisateur?")){
+                window.location.replace("/supprimer_user/" + identifiant);
+            }
         }
     </script>
 {% endblock %}

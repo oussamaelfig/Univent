@@ -7,7 +7,7 @@ UNIVENT - Succès
     <div class="container text-center px-5">
         <!-- form pour creer compte -->
         <div class="bg-light rounded-3 py-5 px-4 px-md-5 mb-5">
-
+            {% if  not delete %}
             <h1>Le compte a été créé avec succès!</h1>
             <div class="row gx-5 justify-content-center">
                 <div class="col-lg-8 col-xl-6">
@@ -15,6 +15,14 @@ UNIVENT - Succès
                         connecter</button>
                 </div>
             </div>
+            {% else %}
+            <h1>La supression est un succès!</h1>
+            <div class="row gx-5 justify-content-center">
+                <div class="col-lg-8 col-xl-6">
+                    <button class="btn btn-secondary" onclick="naviguerLogin()">Retour</button>
+                </div>
+            </div>
+            {% endif %}
         </div>
     </div>
 </section>

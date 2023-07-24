@@ -94,6 +94,12 @@ class Database:
             "select courriel from users inner join sessions on users.identifiant = userId where sessions.identifiant=?",
             (id_session,))
         return cursor.fetchone()[0]
+    
+    def delete_users_from_id(self, id_user):
+        connection = self.get_connexion()
+        cursor = connection.cursor()
+        cursor.execute("delete from users where identifiant=?", (id_user,))
+        connection.commit()
 
     #### Table events #####
     # def get_all_events(self):
@@ -103,7 +109,7 @@ class Database:
     #     events = cursor.fetchall()
     #
     #     return events
-
+    
     def get_event_by_id(self, event_id):
         connect = self.get_connexion()
         cursor = connect.cursor()

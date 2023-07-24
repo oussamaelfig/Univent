@@ -205,7 +205,7 @@ def event_info(event_id, est_etu=False):
 @app.route("/user_page/<identifiant>", methods=["GET", "POST"])
 @authentication_required
 def user_page(identifiant):
-    if get_db().get_type_compte_from_session_id(session["id"]) == 2:
+    if get_db().get_type_compte_from_session_id(session["id"])[0] == 2:
         return redirect("/administration")
     user_info = get_db().get_user_info_from_iden(identifiant)
     events = get_db().get_all_events(identifiant)
@@ -333,15 +333,13 @@ def connecter():
                 return redirect("/user_page/" + utilisateur[2])
             else:
                 return render_template("login.html", erreurs=err)
-        else:
-            return redirect(
-                "/user_page/" + get_db().get_id_user_from_id_session(
-                    session["id"])[0])
+        return 400
     else:
         if "id" not in session:
             return render_template("login.html")
-        return redirect("/user_page/" + get_db().get_id_user_from_id_session(
-            session["id"])[0])
+        return redirect(
+                "/user_page/" + get_db().get_id_user_from_id_session(
+                    session["id"])[0])
 
 
 @authentication_required
@@ -352,6 +350,24 @@ def deconnecter():
     session.pop("id", None)
     return redirect('/')
 
+
+@app.route('/supprimer_user/<identifiant>')
+@authentication_required
+@admin_required
+def suprimer_user(identifiant):
+    get_db().delete_users_from_id(identifiant)
+    return redirect("/supression_success")
+    
+@app.route('/supprimer_event/<identifiant>')
+@authentication_required
+@admin_required
+def supprimer_event_admin(identifiant):
+    get_db().delete_event(identifiant)
+    return redirect("/supression_success")
+
+@app.route('/supression_success')
+def afficher_succes_del():
+    return render_template("succes_compte.html", delete=True)
 
 def valider_compte(nom, courriel):
     err = []
