@@ -24,6 +24,11 @@ class Database:
                        (identifiant, nom, type_c, courriel, hache, salt,))
         connection.commit()
 
+    def get_users(self):
+        cursor = self.get_connexion().cursor()
+        cursor.execute("select * from users")
+        return cursor.fetchall()
+
     def get_user_from_iden(self, ident):
         cursor = self.get_connexion().cursor()
         cursor.execute("select identifiant from users where identifiant = ?",
@@ -106,6 +111,11 @@ class Database:
         event = cursor.fetchone()
 
         return event
+    
+    def get_events(self):
+        cursor = self.get_connexion().cursor()
+        cursor.execute("select * from Events")
+        return cursor.fetchall()
 
     def get_all_events(self, creator_id):
         connect = self.get_connexion()
