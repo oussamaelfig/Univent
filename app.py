@@ -45,6 +45,13 @@ def etudiant_required(f):
         if not is_etudiant(session):
             return send_unauthorized()
         return f(*args, **kwargs)
+    
+def admin_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if not is_admin(session["id"]):
+            return send_unauthorized()
+        return f(*args, **kwargs)
 
 
 def is_etudiant(sessionId):
@@ -53,6 +60,9 @@ def is_etudiant(sessionId):
 
 def is_organisation(sessionId):
     return get_db().get_type_compte_from_session_id(session["id"])[0] == 0
+
+def is_admin(session_id):
+    return get_db().get_type_compte_from_session_id(session_id)[0] == 2
 
 
 # Ne regarde pas le type d'utilisateur. Seulement qu'il soit authentifié
@@ -197,7 +207,6 @@ def user_page(identifiant):
     user_info = get_db().get_user_info_from_iden(identifiant)
     events = get_db().get_all_events(identifiant)
     if (get_db().get_type_compte_from_session_id(session["id"])[0] == 1):
-        print(get_db().get_type_compte_from_session_id(session["id"]))
         events = get_db().get_all_particiapnt_by_courriel(
             get_db().get_courriel_from_id_session(session["id"]))
         return render_template("user_page.html", events=events,
