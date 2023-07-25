@@ -14,7 +14,7 @@ class Database:
         if self.connection is not None:
             self.connection.close()
 
-    #### Table users #####
+    # Table users
     def creer_user(self, identifiant, nom, courriel, type_c, hache, salt):
         connection = self.get_connexion()
         cursor = connection.cursor()
@@ -50,11 +50,12 @@ class Database:
     def get_user_info_from_iden(self, ident):
         cursor = self.get_connexion().cursor()
         cursor.execute(
-            "select nom, typeCompte, courriel from users where identifiant = ?",
+            "select nom, typeCompte, courriel "
+            "from users where identifiant = ?",
             (ident,))
         return cursor.fetchone()
 
-    #### Table sessions ####
+    # Table sessions
     def creer_session(self, sessionId, userId):
         connection = self.get_connexion()
         cursor = connection.cursor()
@@ -91,25 +92,18 @@ class Database:
     def get_courriel_from_id_session(self, id_session):
         cursor = self.get_connexion().cursor()
         cursor.execute(
-            "select courriel from users inner join sessions on users.identifiant = userId where sessions.identifiant=?",
+            "select courriel from users inner join sessions on "
+            "users.identifiant = userId where sessions.identifiant=?",
             (id_session,))
         return cursor.fetchone()[0]
-    
+
     def delete_users_from_id(self, id_user):
         connection = self.get_connexion()
         cursor = connection.cursor()
         cursor.execute("delete from users where identifiant=?", (id_user,))
         connection.commit()
 
-    #### Table events #####
-    # def get_all_events(self):
-    #     connect = self.get_connexion()
-    #     cursor = connect.cursor()
-    #     cursor.execute("SELECT * FROM events")
-    #     events = cursor.fetchall()
-    #
-    #     return events
-    
+    # Table events
     def get_event_by_id(self, event_id):
         connect = self.get_connexion()
         cursor = connect.cursor()
@@ -117,7 +111,7 @@ class Database:
         event = cursor.fetchone()
 
         return event
-    
+
     def get_events(self):
         cursor = self.get_connexion().cursor()
         cursor.execute("select * from Events")
@@ -172,12 +166,11 @@ class Database:
         conn = self.get_connexion()
         cursor = conn.cursor()
         cursor.execute('''
-            SELECT Events.*, users.nom AS creator_name 
-            FROM Events 
-            LEFT JOIN users ON Events.creator_id = users.identifiant 
+            SELECT Events.*, users.nom AS creator_name
+            FROM Events
+            LEFT JOIN users ON Events.creator_id = users.identifiant
             WHERE event_id = ?''', (event_id,))
         event_info = cursor.fetchone()
-
         # Convertir en dictionnaire
         col_names = [column[0] for column in cursor.description]
         event_info_dict = {col_names[index]: value for index, value in
@@ -204,7 +197,8 @@ class Database:
         if flyer_image:
             flyer_image_blob = flyer_image.read()
 
-        # Update the event in the database using the event_id and the modified details
+        # Update the event in the database using the event_id and the
+        # modified details
         cursor.execute(
             "UPDATE Events SET title = ?, start_date_time = ?, end_date_time "
             "= ?, location = ?, flyer_image = ?,"
@@ -236,8 +230,8 @@ class Database:
         conn = self.get_connexion()
         cursor = conn.cursor()
         cursor.execute('''
-            SELECT Events.*, users.nom AS creator_name 
-            FROM Events 
+            SELECT Events.*, users.nom AS creator_name
+            FROM Events
             LEFT JOIN users ON Events.creator_id = users.identifiant
         ''')
         events_info = cursor.fetchall()
@@ -267,7 +261,9 @@ class Database:
     def get_all_particiapnt_by_courriel(self, courriel):
         cursor = self.get_connexion().cursor()
         cursor.execute(
-            "select Events.event_id, title, location, start_date_time, end_date_time, description from Events inner join Participants on Participants.event_id=Events.event_id where email=?",
+            "select Events.event_id, title, location, start_date_time, "
+            "end_date_time, description from Events inner join Participants "
+            "on Participants.event_id=Events.event_id where email=?",
             (courriel,))
         return cursor.fetchall()
 

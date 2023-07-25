@@ -35,6 +35,7 @@ def organisation_required(f):
         if not is_organisation(session):
             return send_unauthorized()
         return f(*args, **kwargs)
+
     return decorated
 
 
@@ -44,14 +45,17 @@ def etudiant_required(f):
         if not is_etudiant(session):
             return send_unauthorized()
         return f(*args, **kwargs)
+
     return decorated
-    
+
+
 def admin_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         if not is_admin(session["id"]):
             return send_unauthorized()
         return f(*args, **kwargs)
+
     return decorated
 
 
@@ -61,6 +65,7 @@ def is_etudiant(sessionId):
 
 def is_organisation(sessionId):
     return get_db().get_type_compte_from_session_id(session["id"])[0] == 0
+
 
 def is_admin(session_id):
     return get_db().get_type_compte_from_session_id(session_id)[0] == 2
@@ -227,6 +232,7 @@ def afficher_admin():
     events = get_db().get_events()
     return render_template("admin.html", users=users, events=events)
 
+
 @app.route("/modify_event/<int:event_id>", methods=["POST"])
 @authentication_required
 @organisation_required
@@ -339,15 +345,15 @@ def connecter():
         if "id" not in session:
             return render_template("login.html")
         return redirect(
-                "/user_page/" + get_db().get_id_user_from_id_session(
-                    session["id"])[0])
+            "/user_page/" + get_db().get_id_user_from_id_session(
+                session["id"])[0])
 
 
 @authentication_required
 @app.route("/logout")
 def deconnecter():
     get_db().delete_session(session["id"])
-    session["id"] = None;
+    session["id"] = None
     session.pop("id", None)
     return redirect('/')
 
@@ -358,7 +364,8 @@ def deconnecter():
 def suprimer_user(identifiant):
     get_db().delete_users_from_id(identifiant)
     return redirect("/supression_success")
-    
+
+
 @app.route('/supprimer_event/<identifiant>')
 @authentication_required
 @admin_required
@@ -366,9 +373,11 @@ def supprimer_event_admin(identifiant):
     get_db().delete_event(identifiant)
     return redirect("/supression_success")
 
+
 @app.route('/supression_success')
 def afficher_succes_del():
     return render_template("succes_compte.html", delete=True)
+
 
 def valider_compte(nom, courriel):
     err = []
@@ -376,7 +385,8 @@ def valider_compte(nom, courriel):
     if nom == "" or len(nom) > 100:
         err.append("Le nom entré est invalide (100 caractères maximum).")
     if courriel == "" or len(courriel) > 100 or not re.fullmatch(regex,
-                                                                 courriel):  # REGEX EST COURRIEL.
+                                                                 courriel):
+        # REGEX EST COURRIEL.
         err.append("Le courriel entré est invalide.")
     return err
 
@@ -434,7 +444,7 @@ def search():
             if event['flyer_image']:
                 event['flyer_image'] = base64.b64encode(
                     event['flyer_image']).decode('utf-8')
-        
+
         return render_template('events.html', events=events, estOrg=est_org)
 
     all_events = get_db().get_all_events()

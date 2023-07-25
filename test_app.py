@@ -66,7 +66,8 @@ class FlaskAppTestCase(unittest.TestCase):
         self.test_user_password = "password123"
         self.test_user_hash = generate_password_hash(self.test_user_password)
         cursor.execute("""
-            INSERT INTO users (identifiant, nom, typeCompte, courriel, hache, salt)
+            INSERT INTO users (identifiant, nom, typeCompte,
+             courriel, hache, salt)
             VALUES (?, ?, ?, ?, ?, ?)""",
                        (self.test_user_identifiant, 'Test Nom', 1,
                         'test@example.com', self.test_user_hash,
