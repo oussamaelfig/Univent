@@ -107,11 +107,13 @@
                                     <small class="text-muted">Créé
                                         par {{ event.creator_name }}</small>
                                 </p>
+                                {% if  not estOrg %}
                                 <button type="button"
                                         class="btn btn-primary register-btn"
                                         data-event-id="{{ event.event_id }}">
                                     S'inscrire
                                 </button>
+                                {% endif %}
                             </div>
                         </div>
                     </div>

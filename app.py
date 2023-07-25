@@ -117,6 +117,7 @@ def about():
 
 @app.route('/events')
 def events():
+    est_org = get_db().get_type_compte_from_session_id(session["id"])[0] != 1
     events = get_db().get_all_events_by_all_users()
     # Convertir l'image BLOB en une chaîne base64 pour chaque événement
     for event in events:
@@ -124,7 +125,7 @@ def events():
             event['flyer_image'] = base64.b64encode(
                 event['flyer_image']).decode('utf-8')
 
-    return render_template('events.html', events=events)
+    return render_template('events.html', events=events, estOrg=est_org)
 
 
 @app.route("/create_event", methods=["GET", "POST"])
@@ -417,6 +418,7 @@ def register(event_id):
 
 @app.route('/search', methods=['GET', 'POST'])
 def search():
+    est_org = get_db().get_type_compte_from_session_id(session["id"])[0] != 1
     if request.method == 'POST':
         title_q = request.form.get('title', '')
         description_q = request.form.get('description', '')
@@ -432,12 +434,11 @@ def search():
             if event['flyer_image']:
                 event['flyer_image'] = base64.b64encode(
                     event['flyer_image']).decode('utf-8')
-
-        return render_template('events.html', events=events)
+        
+        return render_template('events.html', events=events, estOrg=est_org)
 
     all_events = get_db().get_all_events()
-
-    return render_template('events.html', events=all_events)
+    return render_template('events.html', events=all_events, estOrg=est_org)
 
 
 if __name__ == "__main__":
