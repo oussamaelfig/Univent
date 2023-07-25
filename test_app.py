@@ -132,7 +132,20 @@ class FlaskAppTestCase(unittest.TestCase):
             # a 401, en attendant de voir comment
             # connecter le user dans les tests
 
-    # ... add more tests as required ...
+    def test_get_all_events(self):
+        response = self.client.get("/all_events")
+        self.assertEqual(response.status_code, 404)
+
+    def test_login_fail(self):
+        with self.client as c:
+            response = c.post('/login', data=dict(
+                identifiant='invalid_username',
+                password='invalid_password'
+            ), follow_redirects=True)
+
+            self.assertEqual(response.status_code, 400)
+            with c.session_transaction() as sess:
+                self.assertTrue('identifiant' not in sess)
 
 
 if __name__ == "__main__":
