@@ -122,7 +122,11 @@ def about():
 
 @app.route('/events')
 def events():
-    est_org = get_db().get_type_compte_from_session_id(session["id"])[0] != 1
+    if "id" in session:
+        est_org = get_db().get_type_compte_from_session_id(session["id"])[
+                      0] != 1
+    else:
+        est_org = False
     events = get_db().get_all_events_by_all_users()
     # Convertir l'image BLOB en une chaîne base64 pour chaque événement
     for event in events:
@@ -428,7 +432,11 @@ def register(event_id):
 
 @app.route('/search', methods=['GET', 'POST'])
 def search():
-    est_org = get_db().get_type_compte_from_session_id(session["id"])[0] != 1
+    if "id" in session:
+        est_org = get_db().get_type_compte_from_session_id(session["id"])[
+                      0] != 1
+    else:
+        est_org = False
     if request.method == 'POST':
         title_q = request.form.get('title', '')
         description_q = request.form.get('description', '')
