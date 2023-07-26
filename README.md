@@ -190,6 +190,12 @@ commande `deactivate`.
 2. Ouvrez un navigateur web et accédez à l'URL affichée pour voir l'application
    Flask en fonctionnement.
 
+## 🚀 Déploiement sur Render
+
+L'application web est disponible sur https://univent-wfpr.onrender.com/.
+Cliquez sur le lien pour accéder au site.
+Veuillez noter que la version de déploiement n'est pas faite pour le test.
+
 ### Informations pour developpeurs
 
 DockerHub : https://hub.docker.com
