@@ -1,4 +1,4 @@
-# [INF6150 - Génie logiciel: conduite de projets informatiques](https://etudier.uqam.ca/cours?sigle=INF6150)-E23 - UNIVENT
+# UNIVENT
 
 ![Version](https://img.shields.io/badge/version-hiver2023-success?style=flat)
 ![License](https://img.shields.io/badge/license-Apache2.0-green?style=flat)
@@ -11,25 +11,12 @@
 
 #### Auteurs :
 
-- Oussama EL-FIGHA | ELFO74030209
-- Nicolas Plante | PLAN83020108
-- Neil Ridene | RIDN30129504
-- Keven Jude Anténor | ANTK08129003
-- Adje, Kouassi Emmanuel | ADJK19049905
-- Djaha Hermann | DJAM21128107
-
-#### Product Owner :
-
-- Éric Lavallée | lavallee.eric@uqam.ca
-
-#### Courriels :
-
-- el-figha.oussama@courriel.uqam.ca
-- ridene.neil@courrier.uqam.ca
-- adje.kouassi_emmanuel@courrier.uqam.ca
-- antenor.keven_jude@courrier.uqam.ca
-- plante.nicolas.4@courrier.uqam.ca
-- djaha.monemon_junior_hermann@courrier.uqam.ca
+- Oussama EL-FIGHA
+- Nicolas Plante
+- Neil Ridene
+- Keven Jude Anténor
+- Adje, Kouassi Emmanuel
+- Djaha Hermann
 
 ## **📝 Titre et description du projet**
 
